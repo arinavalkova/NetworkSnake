@@ -1,0 +1,116 @@
+syntax = "proto2";
+package snakes;
+option java_package = "";
+option java_outer_classname = "SnakesProto";
+option java_multiple_files = true;
+
+enum NodeRole {
+    NORMAL = 0;
+    MASTER = 1;
+    DEPUTY = 2;
+    VIEWER = 3;
+}
+
+enum PlayerType {
+    HUMAN = 0;
+    ROBOT = 1;
+}
+
+message GamePlayer {
+    required string name = 1;
+    required int32 id = 2;
+    required string ip_address = 3;
+    required int32 port = 4;
+    required NodeRole role = 5;
+    optional PlayerType type = 6 [default = HUMAN];
+    required int32 score = 7;
+}
+
+message GameConfig {
+    optional int32 width = 1 [default = 40];
+    optional int32 height = 2 [default = 30];
+    optional int32 food_static = 3 [default = 1];
+    optional float food_per_player = 4 [default = 1];
+    optional int32 state_delay_ms = 5 [default = 1000];
+    optional float dead_food_prob = 6 [default = 0.1];
+    optional int32 ping_delay_ms = 7 [default = 100];
+    optional int32 node_timeout_ms = 8 [default = 800];
+}
+
+message GamePlayers {
+    repeated GamePlayer players = 1;
+}
+
+enum Direction {
+    UP = 1;
+    DOWN = 2;
+    LEFT = 3;
+    RIGHT = 4;
+}
+
+message GameState {
+    message Coord {
+        optional sint32 x = 1 [default = 0];
+        optional sint32 y = 2 [default = 0];
+    }
+    message Snake {
+        enum SnakeState {
+            ALIVE = 0;
+            ZOMBIE = 1;
+        }
+        required int32 player_id = 1;
+        repeated Coord points = 2;
+        required SnakeState state = 3 [default = ALIVE];
+        required Direction head_direction = 4;
+    }
+    required int32 state_order = 1;
+    repeated Snake snakes = 2;
+    repeated Coord foods = 3;
+    required GamePlayers players = 4;
+    required GameConfig config = 5;
+}
+
+message GameMessage {
+    message PingMsg {
+    }
+    message SteerMsg {
+        required Direction direction = 1;
+    }
+    message AckMsg {
+    }
+    message StateMsg {
+        required GameState state = 1;
+    }
+    message AnnouncementMsg {
+        required GamePlayers players = 1;
+        required GameConfig config = 2;
+        optional bool can_join = 3 [default = true];
+    }
+    message JoinMsg {
+        optional PlayerType player_type = 1 [default = HUMAN];
+        optional bool only_view = 2 [default = false];
+        required string name = 3;
+    }
+    message ErrorMsg {
+        required string error_message = 1;
+    }
+
+    message RoleChangeMsg {
+        optional NodeRole sender_role = 1;
+        optional NodeRole receiver_role = 2;
+    }
+    required int64 msg_seq = 1;
+    optional int32 sender_id = 10;
+    optional int32 receiver_id = 11;
+
+    oneof Type {
+        PingMsg ping = 2;
+        SteerMsg steer = 3;
+        AckMsg ack = 4;
+        StateMsg state = 5;
+        AnnouncementMsg announcement = 6;
+        JoinMsg join = 7;
+        ErrorMsg error = 8;
+        RoleChangeMsg role_change = 9;
+    }
+}

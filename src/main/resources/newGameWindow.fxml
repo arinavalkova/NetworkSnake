@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.controllers.NewGameController">
+   <children>
+      <Label layoutX="317.0" layoutY="179.0" text="New game" textFill="#273a4f">
+         <font>
+            <Font name="Ravie" size="48.0" />
+         </font>
+      </Label>
+      <JFXSlider fx:id="widthSlider" layoutX="473.0" layoutY="294.0" max="20.0" min="10.0" value="10.0" />
+      <JFXSlider fx:id="heightSlider" layoutX="473.0" layoutY="334.0" max="20.0" min="10.0" value="10.0" />
+      <Label layoutX="319.0" layoutY="284.0" text="Field width">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="319.0" layoutY="324.0" text="Field height">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="portField" focusColor="#006064" layoutX="475.0" layoutY="364.0" />
+      <Label layoutX="320.0" layoutY="359.0" text="Port">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <JFXButton fx:id="backButton" buttonType="RAISED" layoutX="39.0" layoutY="606.0" text="Back" textFill="#273a4f">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </JFXButton>
+      <JFXButton fx:id="playButton" layoutX="843.0" layoutY="606.0" text="Play" textFill="#273a4f">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </JFXButton>
+      <JFXTextField fx:id="nameField" focusColor="#006064" layoutX="475.0" layoutY="402.0" />
+      <Label layoutX="319.0" layoutY="397.0" text="Name">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

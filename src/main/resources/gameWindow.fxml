@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.controllers.GameWindowController">
+   <children>
+      <Canvas fx:id="canvas" height="600.0" layoutX="27.0" layoutY="50.0" width="600.0" />
+      <Label layoutX="675.0" layoutY="123.0" text="Host:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="hostField" layoutX="743.0" layoutY="123.0" prefHeight="35.0" prefWidth="170.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="675.0" layoutY="173.0" text="Players:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="668.0" layoutY="69.0" text="Network Snake" textFill="#273a4f">
+         <font>
+            <Font name="Ravie" size="24.0" />
+         </font>
+      </Label>
+      <JFXListView fx:id="playersListView" layoutX="703.0" layoutY="218.0" prefHeight="204.0" prefWidth="200.0" />
+      <Label layoutX="675.0" layoutY="455.0" text="Field size:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="fieldSizeField" layoutX="790.0" layoutY="455.0" prefHeight="35.0" prefWidth="134.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="673.0" layoutY="499.0" text="Food:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="foodField" layoutX="777.0" layoutY="499.0" prefHeight="35.0" prefWidth="134.0">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <JFXButton fx:id="backToMenuButton" layoutX="739.0" layoutY="617.0" text="Back to Menu" textFill="#273a4f">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>
