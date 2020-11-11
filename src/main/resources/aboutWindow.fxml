@@ -6,14 +6,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.controllers.AboutWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphics.controllers.AboutWindowController">
    <children>
       <Label layoutX="389.0" layoutY="73.0" text="About" textFill="#273a4f">
          <font>
             <Font name="Ravie" size="48.0" />
          </font>
       </Label>
-      <Text layoutX="85.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The player controls a long, thin creature resembling a snake, which crawls along the plane, collecting food, avoiding collisions with its own tail and the edges of the playing field. Each time the snake eats a piece of food, it grows longer. The player controls the direction of movement of the snake's head, and the snake's tail follows. The player cannot stop the movement of the snake." textAlignment="JUSTIFY" wrappingWidth="800.0">
+      <Text layoutX="85.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The player controls a long, thin creature resembling a game.snake, which crawls along the plane, collecting food, avoiding collisions with its own tail and the edges of the playing field. Each time the game.snake eats a piece of food, it grows longer. The player controls the direction of movement of the game.snake's head, and the game.snake's tail follows. The player cannot stop the movement of the game.snake." textAlignment="JUSTIFY" wrappingWidth="800.0">
          <font>
             <Font size="20.0" />
          </font>

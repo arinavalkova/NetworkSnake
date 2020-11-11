@@ -1,11 +1,11 @@
-package windows.controllers;
+package graphics.controllers;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
 import main.Invariables;
-import windows.SceneLoader;
+import graphics.loaders.SceneLoader;
 
 public class NewGameController {
 

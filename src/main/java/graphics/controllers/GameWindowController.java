@@ -1,4 +1,4 @@
-package windows.controllers;
+package graphics.controllers;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
@@ -6,8 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import main.Invariables;
-import windows.SceneLoader;
-import windows.SnakeCanvas;
+import graphics.loaders.SceneLoader;
+import graphics.drawers.GameFieldDrawer;
 
 public class GameWindowController {
 
@@ -42,8 +42,9 @@ public class GameWindowController {
     }
 
     private void setSnakeCanvas() {
-        SnakeCanvas snakeCanvas = new SnakeCanvas(canvas);
-        snakeCanvas.draw();
+        GameFieldDrawer gameFieldDrawer = new GameFieldDrawer(canvas.getGraphicsContext2D(),
+                Invariables.SNAKE_FIELD_WIDTH, Invariables.SNAKE_FIELD_HEIGHT);
+        gameFieldDrawer.drawField();
     }
 }
 

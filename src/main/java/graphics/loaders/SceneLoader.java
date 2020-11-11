@@ -1,4 +1,4 @@
-package windows;
+package graphics.loaders;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

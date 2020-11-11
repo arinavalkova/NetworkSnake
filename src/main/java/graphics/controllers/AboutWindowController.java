@@ -1,8 +1,8 @@
-package windows.controllers;
+package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import main.Invariables;
-import windows.SceneLoader;
+import graphics.loaders.SceneLoader;
 
 public class AboutWindowController {
 

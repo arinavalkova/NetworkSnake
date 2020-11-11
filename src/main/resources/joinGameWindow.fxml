@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="windows.controllers.JoinWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphics.controllers.JoinWindowController">
    <children>
-      <Label layoutX="315.0" layoutY="178.0" text="Join game" textFill="#273a4f">
+      <Label layoutX="328.0" layoutY="178.0" text="Join game" textFill="#273a4f">
          <font>
             <Font name="Ravie" size="48.0" />
          </font>
@@ -24,25 +24,25 @@
             <Font name="System Bold" size="24.0" />
          </font>
       </JFXButton>
-      <Label layoutX="310.0" layoutY="268.0" text="Ip">
+      <Label layoutX="365.0" layoutY="271.0" text="Ip">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="ipField" focusColor="#273a4f" layoutX="402.0" layoutY="273.0" />
-      <Label layoutX="311.0" layoutY="301.0" text="Port">
+      <JFXTextField fx:id="ipField" focusColor="#273a4f" layoutX="457.0" layoutY="276.0" />
+      <Label layoutX="366.0" layoutY="304.0" text="Port">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="portField" focusColor="#273a4f" layoutX="402.0" layoutY="306.0" />
-      <JFXTextField fx:id="nameField" focusColor="#273a4f" layoutX="402.0" layoutY="339.0" />
-      <Label layoutX="311.0" layoutY="334.0" text="Name">
+      <JFXTextField fx:id="portField" focusColor="#273a4f" layoutX="457.0" layoutY="309.0" />
+      <JFXTextField fx:id="nameField" focusColor="#273a4f" layoutX="457.0" layoutY="342.0" />
+      <Label layoutX="366.0" layoutY="337.0" text="Name">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXCheckBox fx:id="viewerModeCheckBox" checkedColor="#273a4f" layoutX="384.0" layoutY="390.0" text="Viewer mode">
+      <JFXCheckBox fx:id="viewerModeCheckBox" checkedColor="#273a4f" layoutX="439.0" layoutY="393.0" text="Viewer mode">
          <font>
             <Font size="24.0" />
          </font>

@@ -1,11 +1,8 @@
 package main;
 
 import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import windows.FXMLLoader;
-import windows.SceneLoader;
+import graphics.loaders.SceneLoader;
 
 import java.io.IOException;
 

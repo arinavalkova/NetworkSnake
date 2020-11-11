@@ -1,8 +1,8 @@
 package main;
 
 public class Invariables {
-    public static final Integer SNAKE_FIELD_WIDTH = 600;
-    public static final Integer SNAKE_FIELD_HEIGHT = 600;
+    public static final Integer SNAKE_FIELD_WIDTH = 30;
+    public static final Integer SNAKE_FIELD_HEIGHT = 30;
     public static final Integer GAME_WIDTH = 600;
     public static final Integer GAME_HEIGHT = 600;
     public static final String FIELD_COLOR = "black";
