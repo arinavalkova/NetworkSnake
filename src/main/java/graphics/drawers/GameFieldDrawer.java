@@ -7,7 +7,7 @@ import javafx.scene.paint.Paint;
 import java.util.ArrayList;
 
 public class GameFieldDrawer {
-    private static final String CELL_COLOR = "blue";
+    private static final String SNAKE_CELL_COLOR = "#64b5f6";
     private final static int CELL_SIZE = 20;
     public static final double LINE_WIDTH = 0.2;
 
@@ -33,14 +33,25 @@ public class GameFieldDrawer {
         }
     }
 
-    public void drawSnake(ArrayList<Cell> snakeCells) {
-        for (Cell currentCell : snakeCells) {
-            drawCell(currentCell);
+    public void drawCellsCollection(ArrayList<Cell> cells) {
+        for (Cell currentCell : cells) {
+            drawCell(currentCell, SNAKE_CELL_COLOR);
         }
     }
 
-    private void drawCell(Cell currentCell) {
-        field.setFill(Paint.valueOf(CELL_COLOR));
-        field.fillRect(currentCell.getX(), currentCell.getY(), CELL_SIZE, CELL_SIZE);
+    private void drawCell(Cell currentCell, String cellColor) {
+        field.setFill(Paint.valueOf(cellColor));
+        field.fillRect(currentCell.getX() * CELL_SIZE, currentCell.getY() * CELL_SIZE,
+                CELL_SIZE, CELL_SIZE);
+    }
+
+    public void redraw(ArrayList<Cell> cells) {
+        clearField();
+        drawField();
+        drawCellsCollection(cells);
+    }
+
+    private void clearField() {
+        field.clearRect(0, 0, width * CELL_SIZE, height * CELL_SIZE);
     }
 }

@@ -2,6 +2,7 @@ package graphics.controllers;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import game.Game;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -44,7 +45,8 @@ public class GameWindowController {
     private void setSnakeCanvas() {
         GameFieldDrawer gameFieldDrawer = new GameFieldDrawer(canvas.getGraphicsContext2D(),
                 Invariables.SNAKE_FIELD_WIDTH, Invariables.SNAKE_FIELD_HEIGHT);
-        gameFieldDrawer.drawField();
+        Game game = new Game(gameFieldDrawer);
+        game.start();
     }
 }
 
