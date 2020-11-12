@@ -54,4 +54,12 @@ public class GameFieldDrawer {
     private void clearField() {
         field.clearRect(0, 0, width * CELL_SIZE, height * CELL_SIZE);
     }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

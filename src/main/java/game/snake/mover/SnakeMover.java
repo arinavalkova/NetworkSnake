@@ -1,35 +1,45 @@
 package game.snake.mover;
 
 import game.snake.Cell;
-import java.util.Objects;
+import graphics.controllers.KeyController;
 
 public class SnakeMover {
-    private final static MoveDirection defaultMoveDirection = MoveDirection.UP;
-    private final MoveDirection userMoveDirection;
-    private final Cell headCell;
+    private final KeyController keyController;
+    private final int movingWidth;
+    private final int movingHeight;
 
-    public SnakeMover(Cell headCell, MoveDirection userMoveDirection) {
-        this.headCell = headCell;
-        this.userMoveDirection = userMoveDirection;
+    public SnakeMover(int movingWidth, int movingHeight, KeyController keyController) {
+        this.movingWidth = movingWidth;
+        this.movingHeight = movingHeight;
+        this.keyController = keyController;
     }
 
-    public Cell getCell() {
-        MoveDirection currentMoveDirection = getCurrentMoveDirection();
-        return moveAndGetCell(currentMoveDirection);
+    public Cell getCell(Cell headCell) {
+        MoveDirection moveDirection = keyController.getKey();
+        return moveAndGetCell(headCell, moveDirection);
     }
 
-    private MoveDirection getCurrentMoveDirection() {
-        return Objects.requireNonNullElse(userMoveDirection, defaultMoveDirection);
-    }
-
-    private Cell moveAndGetCell(MoveDirection moveDirection) {
+    private Cell moveAndGetCell(Cell headCell, MoveDirection moveDirection) {
         if (moveDirection == MoveDirection.RIGHT) {
-            return new Cell(headCell.getX() + 1, headCell.getY());
+            return checkOutOfBoundary(headCell.getX() + 1, headCell.getY());
         } else if (moveDirection == MoveDirection.LEFT) {
-            return new Cell(headCell.getX() - 1, headCell.getY());
+            return checkOutOfBoundary(headCell.getX() - 1, headCell.getY());
         } else if (moveDirection == MoveDirection.UP) {
-            return new Cell(headCell.getX(), headCell.getY() + 1);
+            return checkOutOfBoundary(headCell.getX(), headCell.getY() - 1);
         }
-        return new Cell(headCell.getX(), headCell.getY() - 1);
+        return checkOutOfBoundary(headCell.getX(), headCell.getY() + 1);
+    }
+
+    private Cell checkOutOfBoundary(int x, int y) {
+        if (x < 0) {
+            return new Cell(movingWidth - 1, y);
+        } else if (x == movingWidth) {
+            return new Cell(0, y);
+        } else if (y < 0) {
+            return new Cell(x, movingHeight - 1);
+        } else if (y == movingHeight) {
+            return new Cell(x, 0);
+        }
+        return new Cell(x, y);
     }
 }

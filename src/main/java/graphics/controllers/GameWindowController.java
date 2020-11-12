@@ -33,6 +33,10 @@ public class GameWindowController {
     @FXML
     public void initialize() {
         addBackButtonHandler();
+        addCanvasHandler();
+    }
+
+    private void addCanvasHandler() {
         setSnakeCanvas();
     }
 
@@ -43,9 +47,14 @@ public class GameWindowController {
     }
 
     private void setSnakeCanvas() {
+        KeyController keyController = new KeyController();
+        SceneLoader.getScene().setOnKeyPressed(event -> {
+            keyController.setKeyPressed(event.getCode());
+        });
+
         GameFieldDrawer gameFieldDrawer = new GameFieldDrawer(canvas.getGraphicsContext2D(),
                 Invariables.SNAKE_FIELD_WIDTH, Invariables.SNAKE_FIELD_HEIGHT);
-        Game game = new Game(gameFieldDrawer);
+        Game game = new Game(gameFieldDrawer, keyController);
         game.start();
     }
 }

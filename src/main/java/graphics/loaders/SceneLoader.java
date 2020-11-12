@@ -6,11 +6,9 @@ import main.Invariables;
 
 public class SceneLoader {
     private static Scene scene;
-    private static ClassLoader classLoader;
     private static FXMLLoader fxmlLoader;
 
     public static void loadMain(ClassLoader classLoader) {
-        SceneLoader.classLoader = classLoader;
         fxmlLoader = new FXMLLoader(classLoader);
         SceneLoader.scene = new Scene(fxmlLoader.getRoot(Invariables.START_WINDOW));
     }
