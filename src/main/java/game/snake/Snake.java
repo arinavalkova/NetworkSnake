@@ -1,16 +1,13 @@
 package game.snake;
 
-import game.snake.mover.MoveDirection;
-import game.snake.mover.SnakeMover;
+import game.Cell;
 
 import java.util.ArrayList;
 
 public class Snake {
     private final ArrayList<Cell> snake;
-    private final SnakeMover snakeMover;
 
-    public Snake(Cell firstCell, SnakeMover snakeMover) {
-        this.snakeMover = snakeMover;
+    public Snake(Cell firstCell) {
         snake = new ArrayList<>();
         snake.add(firstCell);
         snake.add(createTailCell(firstCell));
@@ -24,12 +21,16 @@ public class Snake {
         return snake;
     }
 
-    public void enlargeSnake(Cell cell) {
-        snake.add(0, cell);//
+    public void eat(Cell cell) {
+        snake.add(0, cell);
     }
 
-    public void moveSnake() {
-        snake.add(0, snakeMover.getCell(snake.get(0)));
+    public void move(Cell cell) {
+        snake.add(0, cell);
         snake.remove(snake.size() - 1);
+    }
+
+    public Cell getHead() {
+        return snake.get(0);
     }
 }

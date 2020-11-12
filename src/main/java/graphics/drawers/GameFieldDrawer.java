@@ -1,13 +1,12 @@
 package graphics.drawers;
 
-import game.snake.Cell;
+import game.Cell;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 
 public class GameFieldDrawer {
-    private static final String SNAKE_CELL_COLOR = "#64b5f6";
     private final static int CELL_SIZE = 20;
     public static final double LINE_WIDTH = 0.2;
 
@@ -33,9 +32,9 @@ public class GameFieldDrawer {
         }
     }
 
-    public void drawCellsCollection(ArrayList<Cell> cells) {
+    public void drawCellsCollection(ArrayList<Cell> cells, String drawerColor) {
         for (Cell currentCell : cells) {
-            drawCell(currentCell, SNAKE_CELL_COLOR);
+            drawCell(currentCell, drawerColor);
         }
     }
 
@@ -45,14 +44,13 @@ public class GameFieldDrawer {
                 CELL_SIZE, CELL_SIZE);
     }
 
-    public void redraw(ArrayList<Cell> cells) {
-        clearField();
-        drawField();
-        drawCellsCollection(cells);
+    public void draw(ArrayList<Cell> cells, String drawerColor) {
+        drawCellsCollection(cells, drawerColor);
     }
 
-    private void clearField() {
+    public void redrawField() {
         field.clearRect(0, 0, width * CELL_SIZE, height * CELL_SIZE);
+        drawField();
     }
 
     public int getWidth() {
