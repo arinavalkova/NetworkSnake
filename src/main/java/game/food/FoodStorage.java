@@ -1,64 +1,62 @@
 package game.food;
 
-import game.Cell;
+import game.field.Cell;
+import game.field.CellRole;
+import game.field.GameField;
 
 import java.util.ArrayList;
 
 public class FoodStorage {
-    private final int FOOD_COUNT;
-    private final int fieldWidth;
-    private final int fieldHeight;
-    private final ArrayList<Cell> foodStorage;
+    private final int foodCount;
+    private final GameField gameField;
+    private final ArrayList<Cell> foodController;
 
-    public FoodStorage(int foodCount, int fieldWidth, int fieldHeight) {
-        this.FOOD_COUNT = foodCount;
-        this.fieldWidth = fieldWidth;
-        this.fieldHeight = fieldHeight;
-        this.foodStorage = new ArrayList<>();
-        generateIfNecessary();
+    public FoodStorage(int foodCount, GameField gameField) {
+        this.foodCount = foodCount;
+        this.gameField = gameField;
+        this.foodController = new ArrayList<>();
+        generateFood();
     }
 
-    private void generateIfNecessary() {
-        int differance = FOOD_COUNT - foodStorage.size();
-        for (int i = 0; i < differance; i++) {
-            foodStorage.add(generateFoodInit());
+    private void generateFood() {
+        int i = 0;
+        int difference = foodCount - foodController.size();
+        while (i < difference) {
+            Cell generatedFoodInit = generateFoodInit();
+            if (generatedFoodInit.findRole(CellRole.FOOD)) {
+                continue;
+            }
+            addFood(generatedFoodInit);
+            i++;
         }
+    }
+
+    private void addFood(Cell cell) {
+        foodController.add(cell);
+        cell.setRole(CellRole.FOOD);
     }
 
     public boolean findAndDelete(Cell foodUnit) {
-        Cell foodInStorage = find(foodUnit);
-        if (foodInStorage == null) {
+        if (!foodUnit.findRole(CellRole.FOOD)) {
             return false;
         }
-        delete(foodInStorage);
-        generateIfNecessary();
+        delete(foodUnit);
+        generateFood();
         return true;
     }
 
-    private void delete(Cell foodInStorage) {
-        foodStorage.remove(foodInStorage);
-    }
-
-    private Cell find(Cell foodUnit) {
-        for (Cell currentFoodInit : foodStorage) {
-            if (currentFoodInit.equals(foodUnit)) {
-                return  currentFoodInit;
-            }
-        }
-        return null;
+    private void delete(Cell foodUnit) {
+        foodUnit.removeRole(CellRole.FOOD);
+        foodController.remove(foodUnit);
     }
 
     private Cell generateFoodInit() {
-        int x = randomInBounds(0, fieldWidth - 1);
-        int y = randomInBounds(0, fieldHeight - 1);
-        return new Cell(x, y);
+        int x = randomInBounds(0, gameField.getWidth() - 1);
+        int y = randomInBounds(0, gameField.getHeight() - 1);
+        return gameField.getCell(x, y);
     }
 
     private int randomInBounds(int min, int max) {
         return (int) (Math.random() * ((max - min) + 1)) + min;
-    }
-
-    public ArrayList<Cell> getCells() {
-        return foodStorage;
     }
 }

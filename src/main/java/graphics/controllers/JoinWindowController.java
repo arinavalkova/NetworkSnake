@@ -4,8 +4,10 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
-import main.Invariables;
+import graphics.loaders.WindowNames;
 import graphics.loaders.SceneLoader;
+
+import java.io.IOException;
 
 public class JoinWindowController {
 
@@ -39,13 +41,21 @@ public class JoinWindowController {
 
     private void addBackButtonHandler() {
         backButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.START_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.START_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 
     private void addJoinButtonHandler() {
         joinButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.GAME_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.GAME_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 }

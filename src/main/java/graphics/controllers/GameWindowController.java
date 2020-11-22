@@ -3,14 +3,21 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import game.Game;
+import game.field.GameField;
+import graphics.data.NewGameWindowData;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
-import main.Invariables;
+import graphics.loaders.WindowNames;
 import graphics.loaders.SceneLoader;
 import graphics.drawers.GameFieldDrawer;
 
+import java.io.IOException;
+
 public class GameWindowController {
+
+    public static final Integer SNAKE_FIELD_WIDTH = 30;
+    public static final Integer SNAKE_FIELD_HEIGHT = 30;
 
     @FXML
     private Canvas canvas;
@@ -42,7 +49,11 @@ public class GameWindowController {
 
     private void addBackButtonHandler() {
         backToMenuButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.START_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.START_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 
@@ -52,9 +63,10 @@ public class GameWindowController {
             keyController.setKeyPressed(event.getCode());
         });
 
-        GameFieldDrawer gameFieldDrawer = new GameFieldDrawer(canvas.getGraphicsContext2D(),
-                Invariables.SNAKE_FIELD_WIDTH, Invariables.SNAKE_FIELD_HEIGHT);
-        Game game = new Game(gameFieldDrawer, keyController);
+        GameField gameField = new GameField(NewGameWindowData.getFieldWidth(),
+                NewGameWindowData.getFieldHeight());
+        GameFieldDrawer gameFieldDrawer = new GameFieldDrawer(canvas.getGraphicsContext2D(), gameField);
+        Game game = new Game(gameField, gameFieldDrawer, keyController);
         game.start();
     }
 }

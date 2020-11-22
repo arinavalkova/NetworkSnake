@@ -5,24 +5,25 @@ import javafx.scene.input.KeyCode;
 
 public class KeyController{
     private MoveDirection key = MoveDirection.UP;
+    private MoveDirection supposedKey = MoveDirection.UP;
 
     public MoveDirection getKey() {
-        return key;
+        return setKeyIfAllowed(supposedKey);
     }
 
     public void setKeyPressed(KeyCode key) {
         if (key == KeyCode.W) {
-            setKeyIfAllowed(MoveDirection.UP);
+            supposedKey = MoveDirection.UP;
         } else if (key == KeyCode.S) {
-            setKeyIfAllowed(MoveDirection.DOWN);
+            supposedKey = MoveDirection.DOWN;
         } else if (key == KeyCode.A) {
-            setKeyIfAllowed(MoveDirection.LEFT);
+            supposedKey = MoveDirection.LEFT;
         } else if (key == KeyCode.D) {
-            setKeyIfAllowed(MoveDirection.RIGHT);
+            supposedKey = MoveDirection.RIGHT;
         }
     }
 
-    private void setKeyIfAllowed(MoveDirection supposedDirection) {
+    public MoveDirection setKeyIfAllowed(MoveDirection supposedDirection) {
         if (supposedDirection == MoveDirection.DOWN && key != MoveDirection.UP) {
             key = supposedDirection;
         } else if (supposedDirection == MoveDirection.UP && key != MoveDirection.DOWN) {
@@ -32,5 +33,6 @@ public class KeyController{
         } else if (supposedDirection == MoveDirection.RIGHT && key != MoveDirection.LEFT) {
             key = supposedDirection;
         }
+        return key;
     }
 }

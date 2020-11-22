@@ -1,8 +1,10 @@
 package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
-import main.Invariables;
+import graphics.loaders.WindowNames;
 import graphics.loaders.SceneLoader;
+
+import java.io.IOException;
 
 public class StartWindowController {
 
@@ -24,19 +26,31 @@ public class StartWindowController {
 
     private void addNewGameButtonHandler() {
         newGameButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.NEW_GAME_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.NEW_GAME_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 
     private void addJoinGameButtonHandler() {
         joinGameButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.JOIN_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.JOIN_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 
     private void addAboutGameHandler() {
         aboutGameButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.ABOUT_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.ABOUT_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 }

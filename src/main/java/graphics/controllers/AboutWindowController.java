@@ -1,8 +1,10 @@
 package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
-import main.Invariables;
+import graphics.loaders.WindowNames;
 import graphics.loaders.SceneLoader;
+
+import java.io.IOException;
 
 public class AboutWindowController {
 
@@ -12,7 +14,11 @@ public class AboutWindowController {
     @FXML
     void initialize() {
         backButton.setOnAction(e -> {
-            SceneLoader.load(Invariables.START_WINDOW);
+            try {
+                SceneLoader.load(WindowNames.START_WINDOW);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
     }
 }

@@ -14,8 +14,8 @@
             <Font name="Ravie" size="48.0" />
          </font>
       </Label>
-      <JFXSlider fx:id="widthSlider" layoutX="473.0" layoutY="294.0" max="20.0" min="10.0" value="10.0" />
-      <JFXSlider fx:id="heightSlider" layoutX="473.0" layoutY="334.0" max="20.0" min="10.0" value="10.0" />
+      <JFXSlider fx:id="widthSlider" layoutX="473.0" layoutY="294.0" max="30.0" min="10.0" value="10.0" />
+      <JFXSlider fx:id="heightSlider" layoutX="473.0" layoutY="334.0" max="30.0" min="10.0" value="10.0" />
       <Label layoutX="319.0" layoutY="284.0" text="Field width">
          <font>
             <Font size="24.0" />

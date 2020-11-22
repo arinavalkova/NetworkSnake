@@ -1,12 +1,6 @@
-package main;
+package graphics.loaders;
 
-public class Invariables {
-    public static final Integer SNAKE_FIELD_WIDTH = 30;
-    public static final Integer SNAKE_FIELD_HEIGHT = 30;
-    public static final Integer GAME_WIDTH = 600;
-    public static final Integer GAME_HEIGHT = 600;
-    public static final String FIELD_COLOR = "black";
-
+public class WindowNames {
     public static final String START_WINDOW = "startWindow.fxml";
     public static final String ABOUT_WINDOW = "aboutWindow.fxml";
     public static final String JOIN_WINDOW = "joinGameWindow.fxml";
