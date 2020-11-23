@@ -1,8 +1,8 @@
-package game.snake;
+package game.single.snake;
 
-import game.field.Cell;
-import game.field.CellRole;
-import game.field.GameField;
+import game.single.field.Cell;
+import game.single.field.CellRole;
+import game.single.field.GameField;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,7 @@ public class Snake {
     private void add(int position, Cell cell) {
         snake.add(position, cell);
         cell.setRole(CellRole.SNAKE);
+        gameField.incSnakeCellsCount();
     }
 
     public void eat(Cell cell) {
@@ -42,13 +43,14 @@ public class Snake {
 
     public void move(Cell cell) {
         add(0, cell);
-        remove(snake.get(snake.size() - 1));
+        removeCell(snake.get(snake.size() - 1));
     }
 
-    private void remove(Cell cell) {
+    private void removeCell(Cell cell) {
         Cell gameFieldCell = gameField.getCell(cell.getX(), cell.getY());
         gameFieldCell.removeRole(CellRole.SNAKE);
         snake.remove(cell);
+        gameField.decSnakeCellsCount();
     }
 
     public Cell getHead() {

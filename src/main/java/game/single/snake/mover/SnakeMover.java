@@ -1,10 +1,10 @@
-package game.snake.mover;
+package game.single.snake.mover;
 
-import game.field.Cell;
-import game.field.CellRole;
-import game.field.GameField;
-import game.food.FoodStorage;
-import game.snake.Snake;
+import game.single.field.Cell;
+import game.single.field.CellRole;
+import game.single.field.GameField;
+import game.single.food.FoodStorage;
+import game.single.snake.Snake;
 import graphics.controllers.KeyController;
 
 public class SnakeMover {
@@ -12,6 +12,7 @@ public class SnakeMover {
     private final FoodStorage foodStorage;
     private final Snake snake;
     private final GameField gameField;
+    private int points;
 
     public SnakeMover(GameField gameField, KeyController keyController,
                       Snake snake, FoodStorage foodStorage) {
@@ -19,6 +20,7 @@ public class SnakeMover {
         this.keyController = keyController;
         this.foodStorage = foodStorage;
         this.snake = snake;
+        points = 0;
     }
 
     public Cell move(Cell headCell) {
@@ -51,9 +53,10 @@ public class SnakeMover {
         if (cell.findRole(CellRole.SNAKE)) return -1;
         if (foodStorage.findAndDelete(cell)) {
             snake.eat(cell);
+            points++;
         } else {
             snake.move(cell);
         }
-        return 0;
+        return points;
     }
 }

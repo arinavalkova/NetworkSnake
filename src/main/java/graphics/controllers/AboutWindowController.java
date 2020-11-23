@@ -2,7 +2,7 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import graphics.loaders.WindowNames;
-import graphics.loaders.SceneLoader;
+import graphics.loaders.SceneController;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ public class AboutWindowController {
     void initialize() {
         backButton.setOnAction(e -> {
             try {
-                SceneLoader.load(WindowNames.START_WINDOW);
+                SceneController.load(WindowNames.START_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

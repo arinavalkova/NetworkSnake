@@ -1,4 +1,4 @@
-package game.field;
+package game.single.field;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -50,14 +50,5 @@ public class Cell {
 
     public boolean findRole(CellRole role) {
         return roles.contains(role);
-    }
-
-    @Override
-    public String toString() {
-        return "Cell{" +
-                "x=" + x +
-                ", y=" + y +
-                ", roles=" + roles +
-                '}';
     }
 }

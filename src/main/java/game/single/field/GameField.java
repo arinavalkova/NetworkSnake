@@ -1,4 +1,6 @@
-package game.field;
+package game.single.field;
+
+import main.Random;
 
 import java.util.ArrayList;
 
@@ -7,11 +9,15 @@ public class GameField {
     private final ArrayList<Cell> gameField;
     private final int width;
     private final int height;
+    private int foodCellsCount;
+    private int snakeCellsCount;
 
     public GameField(int width, int height) {
         this.gameField = new ArrayList<>();
         this.height = height;
         this.width = width;
+        foodCellsCount = 0;
+        snakeCellsCount = 0;
         createField();
     }
 
@@ -42,8 +48,9 @@ public class GameField {
     public Cell getCenterOfFreeArea() {
         int x, y;
         while (true) {
-            x = randomInBounds(FREE_AREA - 1, width - FREE_AREA + 1);
-            y = randomInBounds(FREE_AREA - 1, height - FREE_AREA + 1);
+            Random random = new Random();
+            x = random.inBounds(FREE_AREA - 1, width - FREE_AREA + 1);
+            y = random.inBounds(FREE_AREA - 1, height - FREE_AREA + 1);
             Cell cell = getCell(x, y);
             if (cell.findRole(CellRole.SNAKE)) {
                 continue;
@@ -52,7 +59,27 @@ public class GameField {
         }
     }
 
-    private int randomInBounds(int min, int max) {
-        return (int) (Math.random() * ((max - min) + 1)) + min;
+    public int getFoodCellsCount() {
+        return foodCellsCount;
+    }
+
+    public int getSnakeCellsCount() {
+        return snakeCellsCount;
+    }
+
+    public void incFoodCellsCount() {
+        foodCellsCount++;
+    }
+
+    public void incSnakeCellsCount() {
+        snakeCellsCount++;
+    }
+
+    public void decFoodCellsCount() {
+        foodCellsCount--;
+    }
+
+    public void decSnakeCellsCount() {
+        snakeCellsCount--;
     }
 }

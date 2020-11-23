@@ -13,7 +13,7 @@
             <Font name="Ravie" size="48.0" />
          </font>
       </Label>
-      <Text layoutX="85.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The player controls a long, thin creature resembling a game.snake, which crawls along the plane, collecting food, avoiding collisions with its own tail and the edges of the playing field. Each time the game.snake eats a piece of food, it grows longer. The player controls the direction of movement of the game.snake's head, and the game.snake's tail follows. The player cannot stop the movement of the game.snake." textAlignment="JUSTIFY" wrappingWidth="800.0">
+      <Text layoutX="85.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The player controls a long, thin creature resembling a singleGame.multi, which crawls along the plane, collecting food, avoiding collisions with its own tail and the edges of the playing field. Each time the singleGame.multi eats a piece of food, it grows longer. The player controls the direction of movement of the singleGame.snake's head, and the singleGame.snake's tail follows. The player cannot stop the movement of the singleGame.multi." textAlignment="JUSTIFY" wrappingWidth="800.0">
          <font>
             <Font size="20.0" />
          </font>

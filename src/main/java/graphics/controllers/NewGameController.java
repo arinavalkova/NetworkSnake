@@ -3,23 +3,21 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
+import game.multi.ServerGame;
+import game.single.SingleGame;
 import graphics.data.NewGameWindowData;
-import javafx.fxml.FXML;
+import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
-import graphics.loaders.SceneLoader;
+import javafx.fxml.FXML;
 
 import java.io.IOException;
 
 public class NewGameController {
-
     @FXML
     private JFXSlider widthSlider;
 
     @FXML
     private JFXSlider heightSlider;
-
-    @FXML
-    private JFXTextField portField;
 
     @FXML
     private JFXButton backButton;
@@ -28,7 +26,22 @@ public class NewGameController {
     private JFXButton playButton;
 
     @FXML
-    private JFXTextField nameField;
+    private JFXSlider foodStaticSlider;
+
+    @FXML
+    private JFXSlider foodPerPlayerSlider;
+
+    @FXML
+    private JFXSlider stateDelaySlider;
+
+    @FXML
+    private JFXSlider deadFoodProbSlider;
+
+    @FXML
+    private JFXSlider pingDelaySlider;
+
+    @FXML
+    private JFXSlider nodeTimeOutSlider;
 
     @FXML
     void initialize() {
@@ -38,6 +51,13 @@ public class NewGameController {
     private void loadDataFromWindow() {
         NewGameWindowData.setFieldWidth((int) widthSlider.getValue());
         NewGameWindowData.setFieldHeight((int) heightSlider.getValue());
+        NewGameWindowData.setDeadFoodProb(deadFoodProbSlider.getValue());
+        NewGameWindowData.setFoodPerPlayer((int) foodPerPlayerSlider.getValue());
+        NewGameWindowData.setFoodStatic((int) foodStaticSlider.getValue());
+        NewGameWindowData.setNodeTimeOut((int) nodeTimeOutSlider.getValue());
+        NewGameWindowData.setPingDelay((int) pingDelaySlider.getValue());
+        NewGameWindowData.setStateDelay((int) stateDelaySlider.getValue());
+        NewGameWindowData.setPoint(true);
     }
 
     private void addButtonsHandlers() {
@@ -48,7 +68,7 @@ public class NewGameController {
     private void addBackButtonHandler() {
         backButton.setOnAction(e -> {
             try {
-                SceneLoader.load(WindowNames.START_WINDOW);
+                SceneController.load(WindowNames.START_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -57,9 +77,25 @@ public class NewGameController {
 
     private void addPlayButtonHandler() {
         playButton.setOnAction(e -> {
+            loadDataFromWindow();
+            /*        SINGLE PLAYER
+             *
+             *        SingleGame singleGame = new SingleGame(
+             *                SceneController.load(
+             *                          WindowNames.GAME_WINDOW
+             *                 ).getController(),
+             *                NewGameWindowData.getFieldWidth(),
+             *                NewGameWindowData.getFieldHeight(),
+             *                SceneController.getKeyController(),
+             *                NewGameWindowData.getStateDelay(),
+             *                NewGameWindowData.getFoodStatic()
+             *        );
+             *        singleGame.start();
+             */
             try {
-                loadDataFromWindow();
-                SceneLoader.load(WindowNames.GAME_WINDOW);
+                ServerGame.startNewGame(SceneController.load(
+                                                  WindowNames.GAME_WINDOW
+                                         ).getController());
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

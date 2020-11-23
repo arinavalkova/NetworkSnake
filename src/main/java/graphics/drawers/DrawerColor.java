@@ -1,11 +1,11 @@
 package graphics.drawers;
 
-import game.field.CellRole;
+import game.single.field.CellRole;
 
 import java.util.Map;
 
 public class DrawerColor {
-    public final static String FOOD = "#ef5350";
+    public final static String FOOD = "#ff8a65";
     public final static String SNAKE = "#64b5f6";
 
     private static final Map<CellRole, String> drawerColorMap = Map.of(

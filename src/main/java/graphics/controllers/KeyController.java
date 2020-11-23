@@ -1,6 +1,6 @@
 package graphics.controllers;
 
-import game.snake.mover.MoveDirection;
+import game.single.snake.mover.MoveDirection;
 import javafx.scene.input.KeyCode;
 
 public class KeyController{
@@ -12,6 +12,7 @@ public class KeyController{
     }
 
     public void setKeyPressed(KeyCode key) {
+        System.out.println("Pressed: " + key);
         if (key == KeyCode.W) {
             supposedKey = MoveDirection.UP;
         } else if (key == KeyCode.S) {

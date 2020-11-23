@@ -1,4 +1,4 @@
-package game.field;
+package game.single.field;
 
 public enum CellRole {
     FOOD, SNAKE

@@ -1,8 +1,9 @@
 package main;
 
+import game.multi.ServerGame;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import graphics.loaders.SceneLoader;
+import graphics.loaders.SceneController;
 
 import java.io.IOException;
 
@@ -14,9 +15,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        ServerGame.startServer();
+
         ClassLoader classLoader = getClass().getClassLoader();
-        SceneLoader.loadMain(classLoader);
-        primaryStage.setScene(SceneLoader.getScene());
+        SceneController.loadMain(classLoader);
+        primaryStage.setScene(SceneController.getScene());
         primaryStage.setResizable(false);
         primaryStage.show();
 //        SnakeField snakeField = new SnakeField();

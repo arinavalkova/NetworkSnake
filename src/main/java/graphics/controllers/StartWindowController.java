@@ -1,8 +1,9 @@
 package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
+import game.multi.ServerGame;
 import javafx.fxml.FXML;
 import graphics.loaders.WindowNames;
-import graphics.loaders.SceneLoader;
+import graphics.loaders.SceneController;
 
 import java.io.IOException;
 
@@ -27,7 +28,7 @@ public class StartWindowController {
     private void addNewGameButtonHandler() {
         newGameButton.setOnAction(e -> {
             try {
-                SceneLoader.load(WindowNames.NEW_GAME_WINDOW);
+                SceneController.load(WindowNames.NEW_GAME_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -37,7 +38,7 @@ public class StartWindowController {
     private void addJoinGameButtonHandler() {
         joinGameButton.setOnAction(e -> {
             try {
-                SceneLoader.load(WindowNames.JOIN_WINDOW);
+                SceneController.load(WindowNames.JOIN_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -47,7 +48,7 @@ public class StartWindowController {
     private void addAboutGameHandler() {
         aboutGameButton.setOnAction(e -> {
             try {
-                SceneLoader.load(WindowNames.ABOUT_WINDOW);
+                SceneController.load(WindowNames.ABOUT_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
