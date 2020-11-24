@@ -38,15 +38,14 @@ public class GameWindowController {
     @FXML
     public void initialize() {
         addBackButtonHandler();
-        setFieldsWithData();
         setPoints(0);
     }
 
-    private void setFieldsWithData() {
-        foodField.setText(String.valueOf(NewGameWindowData.getFoodStatic()));
-        fieldSizeField.setText(NewGameWindowData.getFieldWidth() +
-                " X " + NewGameWindowData.getFieldHeight());
+    public void setFieldSize(int width, int height) {
+        Platform.runLater(() ->fieldSizeField.setText(width + " X " + height));
     }
+
+    //foodField setter
 
     private void addBackButtonHandler() {
         backToMenuButton.setOnAction(e -> {

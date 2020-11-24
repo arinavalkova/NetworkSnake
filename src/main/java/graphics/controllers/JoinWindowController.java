@@ -3,7 +3,9 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
-import game.multi.ServerGame;
+import dto.NodeRole;
+import game.multi.Server;
+import graphics.data.JoinGameWindowData;
 import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
 import javafx.application.Platform;
@@ -32,24 +34,24 @@ public class JoinWindowController {
         addButtonsHandlers();
     }
 
-    private void updateGamesList() {
-        Thread updateGameListThread = new Thread(() -> {
-            /* TO DO */
-            while (true) {
-                try {
-                    Platform.runLater(() -> {
-                        gamesListView.getItems().clear();
-                        gamesListView.getItems().add(ServerGame.getCurrentGames());
-                    });
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            /*TO DO*/
-        });
-        updateGameListThread.start();
-    }
+//    private void updateGamesList() {
+//        Thread updateGameListThread = new Thread(() -> {
+//            /* TO DO */
+//            while (true) {
+//                try {
+//                    Platform.runLater(() -> {
+//                        gamesListView.getItems().clear();
+//                        gamesListView.getItems().add(Server.getCurrentGames());
+//                    });
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            /*TO DO*/
+//        });
+//        updateGameListThread.start();
+//    }
 
     private void addButtonsHandlers() {
         addBackButtonHandler();
@@ -68,11 +70,14 @@ public class JoinWindowController {
 
     private void addJoinButtonHandler() {
         joinButton.setOnAction(e -> {
+            loadDataFromWindow();
             try {
-                loadDataFromWindow();
-                ServerGame.joinGame(SceneController.load(
+                Server.joinGame(SceneController.load(
                         WindowNames.GAME_WINDOW
-                ).getController());
+                ).getController(), viewerModeCheckBox.isSelected() ?
+                        NodeRole.VIEWER
+                        :
+                        NodeRole.NORMAL);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

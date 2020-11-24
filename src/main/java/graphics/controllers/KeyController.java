@@ -1,6 +1,6 @@
 package graphics.controllers;
 
-import game.single.snake.mover.MoveDirection;
+import game.multi.snake.mover.MoveDirection;
 import javafx.scene.input.KeyCode;
 
 public class KeyController{

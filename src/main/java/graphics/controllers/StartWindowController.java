@@ -1,6 +1,5 @@
 package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
-import game.multi.ServerGame;
 import javafx.fxml.FXML;
 import graphics.loaders.WindowNames;
 import graphics.loaders.SceneController;

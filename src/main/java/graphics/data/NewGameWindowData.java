@@ -10,23 +10,21 @@ public class NewGameWindowData {
     private static double   deadFoodProb;
     private static int      pingDelay;
     private static int      nodeTimeOut;
-    private static boolean  point;
-
-
-    public static void setFieldWidth(int fieldWidth) {
-        NewGameWindowData.fieldWidth = fieldWidth;
-    }
-
-    public static void setFieldHeight(int fieldHeight) {
-        NewGameWindowData.fieldHeight = fieldHeight;
-    }
 
     public static int getFieldWidth() {
         return fieldWidth;
     }
 
+    public static void setFieldWidth(int fieldWidth) {
+        NewGameWindowData.fieldWidth = fieldWidth;
+    }
+
     public static int getFieldHeight() {
         return fieldHeight;
+    }
+
+    public static void setFieldHeight(int fieldHeight) {
+        NewGameWindowData.fieldHeight = fieldHeight;
     }
 
     public static int getFoodStatic() {
@@ -75,13 +73,5 @@ public class NewGameWindowData {
 
     public static void setNodeTimeOut(int nodeTimeOut) {
         NewGameWindowData.nodeTimeOut = nodeTimeOut;
-    }
-
-    public static boolean isPoint() {
-        return point;
-    }
-
-    public static void setPoint(boolean point) {
-        NewGameWindowData.point = point;
     }
 }

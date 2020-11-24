@@ -1,8 +1,8 @@
 package graphics.drawers;
 
-import game.single.field.Cell;
-import game.single.field.CellRole;
-import game.single.field.GameField;
+import game.multi.field.Cell;
+import game.multi.field.CellRole;
+import game.multi.field.GameField;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;

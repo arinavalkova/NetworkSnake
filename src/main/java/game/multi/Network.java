@@ -3,7 +3,7 @@ package game.multi;
 import java.io.IOException;
 import java.net.*;
 
-public class DataStream {
+public class Network {
     private static final String MULTICAST_IP = "239.192.0.4";
     private static final int MULTICAST_PORT = 9192;
     private static final int BUFF_SIZE = 1024;
@@ -12,7 +12,7 @@ public class DataStream {
     private static DatagramSocket unicastSocket;
     private static MulticastSocket multicastSocket;
 
-    public DataStream() {
+    public Network() {
         try {
             group = InetAddress.getByName(MULTICAST_IP);
 

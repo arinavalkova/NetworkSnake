@@ -1,6 +1,6 @@
 package graphics.drawers;
 
-import game.single.field.CellRole;
+import game.multi.field.CellRole;
 
 import java.util.Map;
 
