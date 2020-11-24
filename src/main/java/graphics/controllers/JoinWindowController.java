@@ -3,15 +3,13 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
 import game.multi.ServerGame;
+import graphics.loaders.SceneController;
+import graphics.loaders.WindowNames;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import graphics.loaders.WindowNames;
-import graphics.loaders.SceneController;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JoinWindowController {
 
@@ -30,7 +28,7 @@ public class JoinWindowController {
 
     @FXML
     void initialize() {
-        updateGamesList();
+        //updateGamesList();
         addButtonsHandlers();
     }
 

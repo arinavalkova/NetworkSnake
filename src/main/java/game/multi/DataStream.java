@@ -1,10 +1,7 @@
 package game.multi;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.*;
 
 public class DataStream {
     private static final String MULTICAST_IP = "239.192.0.4";
@@ -42,6 +39,27 @@ public class DataStream {
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
         try {
             multicastSocket.receive(packetFromGroup);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return buffer;
+    }
+
+    public void sendToSocket(byte[] bytes, SocketAddress socketAddress) {
+        try {
+            DatagramPacket sendingPacket = new DatagramPacket(bytes, bytes.length,
+                    socketAddress);
+            unicastSocket.send(sendingPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] receiveFromSocket() {
+        byte[] buffer = new byte[BUFF_SIZE];
+        DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
+        try {
+            unicastSocket.receive(packetFromGroup);
         } catch (IOException e) {
             e.printStackTrace();
         }
