@@ -25,6 +25,8 @@ public class UnicastMessagesStorage {
     }
 
     public String takeReceivedMessage() {
+        if (receivedMessagesList.isEmpty())
+            return null;
         String receivedMessage = receivedMessagesList.get(0);
         receivedMessagesList.remove(0);
         return receivedMessage;

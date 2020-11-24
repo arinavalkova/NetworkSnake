@@ -11,6 +11,7 @@ import game.multi.snake.mover.SnakeMover;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.KeyController;
 import graphics.drawers.GameFieldDrawer;
+import javafx.scene.input.KeyCode;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ public class Game implements ActionListener {
     private final SnakeMover snakeMover;
     private final Timer timer;
     private final SenderMulticast senderMulticast;
+    private final KeyController keyController;
 
     public Game(
             KeyController keyController,
@@ -63,6 +65,7 @@ public class Game implements ActionListener {
         this.timer = new Timer(stateDelay, this);
         this.unicastMessagesStorage = new UnicastMessagesStorage(network);
         this.senderMulticast = new SenderMulticast(network);
+        this.keyController = keyController;
     }
 
     public void start() {
@@ -73,9 +76,9 @@ public class Game implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Player player = playersMap.get(nodeRole);
-        nodeRole = player.play(this);
-        if (nodeRole == null) end();
+        if (playersMap.get(nodeRole).play(this) == -1) {
+            end();
+        }
     }
 
     private void end() {
@@ -118,5 +121,9 @@ public class Game implements ActionListener {
 
     public SenderMulticast getSenderMulticast() {
         return senderMulticast;
+    }
+
+    public KeyController getKeyController() {
+        return keyController;
     }
 }

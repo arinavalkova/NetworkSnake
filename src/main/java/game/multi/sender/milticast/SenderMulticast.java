@@ -5,11 +5,13 @@ import main.TimeOut;
 
 public class SenderMulticast {
     private final static int TIME_OUT = 1000;
+
+    private boolean isWork = true;
     private Network network;
     private String message; //change string to packet
 
     private final Thread sendThread = new Thread(() -> {
-        while (true) {
+        while (isWork) {
             network.sendToGroup(message.getBytes());
             new TimeOut(TIME_OUT).start();
         }
@@ -24,5 +26,9 @@ public class SenderMulticast {
         if (sendThread.getState() == Thread.State.NEW) {
             sendThread.start();
         }
+    }
+
+    public void stop() {
+        isWork = false;
     }
 }

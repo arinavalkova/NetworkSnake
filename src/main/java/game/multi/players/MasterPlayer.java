@@ -1,26 +1,25 @@
 package game.multi.players;
 
-import dto.NodeRole;
 import game.multi.Game;
 import game.multi.field.CellRole;
 
 public class MasterPlayer implements Player {
     @Override
-    public NodeRole play(Game game) {
-        NodeRole nodeRole = game.getNodeRole();
+    public int play(Game game) {
         game.getSenderMulticast().updateGameStateInvite("Hello");     /* TEST */
         int points;
         if ((points = game.getSnakeMover().start()) == -1) {
-            //stop sending invites
+            game.getSenderMulticast().stop();
+            //send to deputy last receivedMessages
+            return -1;
         }
         receiveMessageProcessing(game);
-        //update my role
         //send to all players GameState
         game.getGameWindowController().setPoints(points);
         game.getGameFieldDrawer().redrawField();
         game.getGameFieldDrawer().draw(CellRole.FOOD);
         game.getGameFieldDrawer().draw(CellRole.SNAKE);
-        return nodeRole;
+        return 0;
     }
 
     private void receiveMessageProcessing(Game game) {
