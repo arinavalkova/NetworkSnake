@@ -11,7 +11,6 @@ import game.multi.snake.mover.SnakeMover;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.KeyController;
 import graphics.drawers.GameFieldDrawer;
-import javafx.scene.input.KeyCode;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -29,9 +28,11 @@ public class Game implements ActionListener {
     private final int nodeTimeOut;
     private final double deadFoodProb;
     private final SnakeMover snakeMover;
-    private final Timer timer;
+    private final Timer mainTimer;
     private final SenderMulticast senderMulticast;
     private final KeyController keyController;
+
+    //master info
 
     public Game(
             KeyController keyController,
@@ -62,16 +63,17 @@ public class Game implements ActionListener {
         Snake snake = new Snake(gameField);
         FoodStorage foodStorage = new FoodStorage(foodStatic, foodPerPlayer, gameField);
         snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
-        this.timer = new Timer(stateDelay, this);
+        this.mainTimer = new Timer(stateDelay, this);
         this.unicastMessagesStorage = new UnicastMessagesStorage(network);
         this.senderMulticast = new SenderMulticast(network);
         this.keyController = keyController;
+        //grab master info
     }
 
     public void start() {
         unicastMessagesStorage.start();
         gameFieldDrawer.drawField();
-        timer.start();
+        mainTimer.start();
     }
 
     @Override
@@ -85,7 +87,7 @@ public class Game implements ActionListener {
         gameFieldDrawer.drawEndOfGame();
         //maybe something else for end of game
         //stop receiver unicast
-        timer.stop();
+        mainTimer.stop();
     }
 
     public GameFieldDrawer getGameFieldDrawer() {
@@ -125,5 +127,9 @@ public class Game implements ActionListener {
 
     public KeyController getKeyController() {
         return keyController;
+    }
+
+    public void setNodeRole(NodeRole nodeRole) {
+        this.nodeRole = nodeRole;
     }
 }

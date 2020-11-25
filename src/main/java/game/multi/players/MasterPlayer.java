@@ -1,19 +1,31 @@
 package game.multi.players;
 
+import dto.NodeRole;
 import game.multi.Game;
 import game.multi.field.CellRole;
 
 public class MasterPlayer implements Player {
     @Override
     public int play(Game game) {
-        game.getSenderMulticast().updateGameStateInvite("Hello");     /* TEST */
-        int points;
+        if (game.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
+            //send deputy that he is master now
+            //send deputy also all raw messages
+            //send deputy that my snake is ZOMBIE
+            //stop all master sendings
+            game.setNodeRole(NodeRole.VIEWER);
+            return 0;
+        }
+        game.getSenderMulticast().updateGameStateInvite("Hello");     /* Invite send thread updating */
+        int points;//play check all which uplyed by receiver
         if ((points = game.getSnakeMover().start()) == -1) {
             game.getSenderMulticast().stop();
-            //send to deputy last receivedMessages
+            //send deputy that he is master now
+            //send deputy also all raw messages
+            //send deputy that my snake is ZOMBIE
+            //stop all master sendings
             return -1;
         }
-        receiveMessageProcessing(game);
+        //receiveMessageProcessing(game); --> maybe unless
         //send to all players GameState
         game.getGameWindowController().setPoints(points);
         game.getGameFieldDrawer().redrawField();

@@ -51,7 +51,7 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXButton fx:id="backToMenuButton" layoutX="739.0" layoutY="617.0" text="Back to Menu" textFill="#273a4f">
+      <JFXButton fx:id="backToMenuButton" layoutX="753.0" layoutY="624.0" prefHeight="49.0" prefWidth="183.0" text="Back to Menu" textFill="#273a4f">
          <font>
             <Font size="24.0" />
          </font>
@@ -66,5 +66,10 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <JFXButton fx:id="changeRoleButton" layoutX="661.0" layoutY="624.0" text="View" textFill="#273a4f">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </JFXButton>
    </children>
 </AnchorPane>

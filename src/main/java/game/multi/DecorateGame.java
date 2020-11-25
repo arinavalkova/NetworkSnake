@@ -36,6 +36,7 @@ public class DecorateGame {
     }
 
     public void decorateJoinGameAs(NodeRole nodeRole) {
+        //send MASTER request to join as nodeRole
         //getting messages from MASTER for join
         //some preparations for join game window from this message
 //        Game game = new Game(
