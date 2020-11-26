@@ -1,5 +1,6 @@
 package main;
 
+import game.multi.Server;
 import graphics.loaders.SceneController;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -14,10 +15,16 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Server.start();
         ClassLoader classLoader = getClass().getClassLoader();
         SceneController.loadMain(classLoader);
         primaryStage.setScene(SceneController.getScene());
         primaryStage.setResizable(false);
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> {
+            Server.stop();
+            primaryStage.close();
+        });
     }
 }

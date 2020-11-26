@@ -4,7 +4,7 @@ import dto.NodeRole;
 import game.multi.field.GameField;
 import game.multi.food.FoodStorage;
 import game.multi.players.*;
-import game.multi.receive.unicast.UnicastMessagesStorage;
+import game.multi.receive.UnicastMessagesStorage;
 import game.multi.sender.milticast.SenderMulticast;
 import game.multi.snake.Snake;
 import game.multi.snake.mover.SnakeMover;
@@ -18,7 +18,6 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 
 public class Game implements ActionListener {
-    private final UnicastMessagesStorage unicastMessagesStorage;
     private final GameWindowController gameWindowController;
     private final GameFieldDrawer gameFieldDrawer;
     private final int stateDelay;
@@ -29,7 +28,6 @@ public class Game implements ActionListener {
     private final double deadFoodProb;
     private final SnakeMover snakeMover;
     private final Timer mainTimer;
-    private final SenderMulticast senderMulticast;
     private final KeyController keyController;
 
     //master info
@@ -64,14 +62,11 @@ public class Game implements ActionListener {
         FoodStorage foodStorage = new FoodStorage(foodStatic, foodPerPlayer, gameField);
         snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
         this.mainTimer = new Timer(stateDelay, this);
-        this.unicastMessagesStorage = new UnicastMessagesStorage(network);
-        this.senderMulticast = new SenderMulticast(network);
         this.keyController = keyController;
         //grab master info
     }
 
     public void start() {
-        unicastMessagesStorage.start();
         gameFieldDrawer.drawField();
         mainTimer.start();
     }
@@ -79,11 +74,11 @@ public class Game implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (playersMap.get(nodeRole).play(this) == -1) {
-            end();
+            stop();
         }
     }
 
-    private void end() {
+    public void stop() {
         gameFieldDrawer.drawEndOfGame();
         //maybe something else for end of game
         //stop receiver unicast
@@ -110,20 +105,12 @@ public class Game implements ActionListener {
         return nodeRole;
     }
 
-    public UnicastMessagesStorage getReceiverUnicast() {
-        return unicastMessagesStorage;
-    }
-
     private static final Map<NodeRole, Player> playersMap = Map.of(
             NodeRole.DEPUTY, new DeputyPlayer(),
             NodeRole.MASTER, new MasterPlayer(),
             NodeRole.NORMAL, new NormalPlayer(),
             NodeRole.VIEWER, new ViewerPlayer()
     );
-
-    public SenderMulticast getSenderMulticast() {
-        return senderMulticast;
-    }
 
     public KeyController getKeyController() {
         return keyController;

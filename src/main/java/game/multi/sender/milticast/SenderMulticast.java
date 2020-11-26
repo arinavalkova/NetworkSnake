@@ -10,7 +10,7 @@ public class SenderMulticast {
     private Network network;
     private String message; //change string to packet
 
-    private final Thread sendThread = new Thread(() -> {
+    private Thread sendThread = new Thread(() -> {
         while (isWork) {
             network.sendToGroup(message.getBytes());
             new TimeOut(TIME_OUT).start();
@@ -30,5 +30,11 @@ public class SenderMulticast {
 
     public void stop() {
         isWork = false;
+        sendThread = new Thread(() -> {
+            while (isWork) {
+                network.sendToGroup(message.getBytes());
+                new TimeOut(TIME_OUT).start();
+            }
+        });
     }
 }

@@ -65,4 +65,9 @@ public class Network {
         }
         return buffer;
     }
+
+    public void stop() {
+        unicastSocket.close();
+        multicastSocket.close();
+    }
 }

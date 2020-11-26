@@ -1,4 +1,4 @@
-package game.multi.receive.unicast;
+package game.multi.receive;
 
 import game.multi.Network;
 

@@ -8,6 +8,7 @@ import graphics.loaders.SceneController;
 public class DecorateGame {
     private final GameWindowController gameWindowController;
     private final Network network;
+    private Game game;
 
     public DecorateGame(GameWindowController gameWindowController, Network network) {
         this.network = network;
@@ -18,7 +19,7 @@ public class DecorateGame {
         //another decorations
         gameWindowController.setFieldSize(NewGameWindowData.getFieldWidth(),
                 NewGameWindowData.getFieldHeight());
-        Game game = new Game(
+        this.game = new Game(
                 SceneController.getKeyController(),
                 gameWindowController,
                 network,
@@ -45,5 +46,9 @@ public class DecorateGame {
 //                nodeRole, /* another params from message */
 //        );
 //        game.start();
+    }
+
+    public Game getGame() {
+        return game;
     }
 }
