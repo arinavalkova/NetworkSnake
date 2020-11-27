@@ -7,14 +7,14 @@ import game.multi.field.CellRole;
 
 public class MasterPlayer implements Player {
     @Override
-    public int play(Game game) {
+    public void play(Game game) {
         if (game.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
             //send deputy that he is master now
             //send deputy also all raw messages
             //send deputy that my snake is ZOMBIE
             //stop all master sendings
             game.setNodeRole(NodeRole.VIEWER);
-            return 0;
+            return;
         }
         Server.getSenderMulticast().updateGameStateInvite("Hello");     /* Invite send thread updating */
         int points;//play check all which uplyed by receiver
@@ -23,13 +23,8 @@ public class MasterPlayer implements Player {
             //send deputy that he is master now
             //send deputy also all raw messages
             //send deputy that my snake is ZOMBIE
-            return -1;
+            game.setGameOver(true);
         }
         //send to all players GameState
-        game.getGameWindowController().setPoints(points);
-        game.getGameFieldDrawer().redrawField();
-        game.getGameFieldDrawer().draw(CellRole.FOOD);
-        game.getGameFieldDrawer().draw(CellRole.SNAKE);
-        return 0;
     }
 }

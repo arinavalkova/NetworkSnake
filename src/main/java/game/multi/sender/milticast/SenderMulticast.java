@@ -8,11 +8,11 @@ public class SenderMulticast {
 
     private boolean isWork = true;
     private Network network;
-    private String message; //change string to packet
+    private byte[] message;
 
     private Thread sendThread = new Thread(() -> {
         while (isWork) {
-            network.sendToGroup(message.getBytes());
+            network.sendToGroup(message);
             new TimeOut(TIME_OUT).start();
         }
     });
@@ -21,7 +21,7 @@ public class SenderMulticast {
         this.network = network;
     }
 
-    public void updateGameStateInvite(String message) {
+    public void updateGameStateInvite(byte[] message) {
        this.message = message;
         if (sendThread.getState() == Thread.State.NEW) {
             sendThread.start();
@@ -32,7 +32,7 @@ public class SenderMulticast {
         isWork = false;
         sendThread = new Thread(() -> {
             while (isWork) {
-                network.sendToGroup(message.getBytes());
+                network.sendToGroup(message);
                 new TimeOut(TIME_OUT).start();
             }
         });

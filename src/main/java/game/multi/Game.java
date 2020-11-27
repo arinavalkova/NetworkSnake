@@ -1,11 +1,11 @@
 package game.multi;
 
 import dto.NodeRole;
+import game.multi.field.CellRole;
 import game.multi.field.GameField;
 import game.multi.food.FoodStorage;
 import game.multi.players.*;
-import game.multi.receive.UnicastMessagesStorage;
-import game.multi.sender.milticast.SenderMulticast;
+import game.multi.sender.milticast.ConfirmSender;
 import game.multi.snake.Snake;
 import game.multi.snake.mover.SnakeMover;
 import graphics.controllers.GameWindowController;
@@ -29,6 +29,9 @@ public class Game implements ActionListener {
     private final SnakeMover snakeMover;
     private final Timer mainTimer;
     private final KeyController keyController;
+    private final ConfirmSender confirmSender;
+
+    private boolean gameOver = false;
 
     //master info
 
@@ -63,6 +66,7 @@ public class Game implements ActionListener {
         snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
         this.mainTimer = new Timer(stateDelay, this);
         this.keyController = keyController;
+        this.confirmSender = new ConfirmSender(pingDelay, nodeTimeOut, network);
         //grab master info
     }
 
@@ -73,16 +77,20 @@ public class Game implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (playersMap.get(nodeRole).play(this) == -1) {
+        if (gameOver) {
             stop();
         }
+        playersMap.get(nodeRole).play(this);
+        //getGameWindowController().setPoints(points);
+        getGameFieldDrawer().redrawField();
+        getGameFieldDrawer().draw(CellRole.FOOD);
+        getGameFieldDrawer().draw(CellRole.SNAKE);
     }
 
     public void stop() {
         gameFieldDrawer.drawEndOfGame();
         //maybe something else for end of game
         //stop receiver unicast
-        mainTimer.stop();
     }
 
     public GameFieldDrawer getGameFieldDrawer() {
@@ -118,5 +126,13 @@ public class Game implements ActionListener {
 
     public void setNodeRole(NodeRole nodeRole) {
         this.nodeRole = nodeRole;
+    }
+
+    public void setGameOver(boolean state) {
+        gameOver = state;
+    }
+
+    public ConfirmSender getConfirmSender() {
+        return confirmSender;
     }
 }

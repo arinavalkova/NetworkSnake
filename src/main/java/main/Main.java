@@ -15,16 +15,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Server.start();
-        ClassLoader classLoader = getClass().getClassLoader();
-        SceneController.loadMain(classLoader);
-        primaryStage.setScene(SceneController.getScene());
-        primaryStage.setResizable(false);
-        primaryStage.show();
-
-        primaryStage.setOnCloseRequest(event -> {
-            Server.stop();
-            primaryStage.close();
-        });
+//        Server.start();
+//        ClassLoader classLoader = getClass().getClassLoader();
+//        SceneController.loadMain(classLoader);
+//        primaryStage.setScene(SceneController.getScene());
+//        primaryStage.setResizable(false);
+//        primaryStage.show();
+//
+//        primaryStage.setOnCloseRequest(event -> {
+//            Server.stop();
+//            primaryStage.close();
+//        });
+        GenerateStateMsg generateStateMsg = new GenerateStateMsg();
+        generateStateMsg.testGenerateStateMsg();
     }
 }
