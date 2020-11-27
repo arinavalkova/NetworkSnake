@@ -51,6 +51,7 @@ public class GenerateStateMsg {
                 .build();
 
         byte[] bytesToSendViaDatagramPacket = gameMessage.toByteArray();
+
         if(81 ==  bytesToSendViaDatagramPacket.length) {
             System.out.println("GOOD");
         } else {

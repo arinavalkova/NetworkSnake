@@ -1,8 +1,8 @@
 package game.multi.receive.handlers;
 
-import game.multi.Game;
+import dto.GameMessage;
 import game.multi.receive.ReceiverFactory;
 
 public interface MessageHandler {
-    void handle(ReceiverFactory receiverFactory /* ,MESSAGE message*/);
+    void handle(ReceiverFactory receiverFactory, GameMessage currentMessage);
 }

@@ -5,6 +5,7 @@ import game.multi.field.CellRole;
 import game.multi.field.GameField;
 import game.multi.food.FoodStorage;
 import game.multi.players.*;
+import game.multi.proto.parses.ProtoParser;
 import game.multi.sender.milticast.ConfirmSender;
 import game.multi.snake.Snake;
 import game.multi.snake.mover.SnakeMover;
@@ -30,6 +31,7 @@ public class Game implements ActionListener {
     private final Timer mainTimer;
     private final KeyController keyController;
     private final ConfirmSender confirmSender;
+    private final ProtoParser protoParser;
 
     private boolean gameOver = false;
 
@@ -67,6 +69,7 @@ public class Game implements ActionListener {
         this.mainTimer = new Timer(stateDelay, this);
         this.keyController = keyController;
         this.confirmSender = new ConfirmSender(pingDelay, nodeTimeOut, network);
+        this.protoParser = new ProtoParser();
         //grab master info
     }
 
@@ -134,5 +137,9 @@ public class Game implements ActionListener {
 
     public ConfirmSender getConfirmSender() {
         return confirmSender;
+    }
+
+    public ProtoParser getProtoParser() {
+        return protoParser;
     }
 }
