@@ -4,7 +4,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import dto.GameMessage;
 import game.multi.Game;
 import game.multi.Network;
-import game.multi.proto.parses.ProtoParser;
+import game.multi.proto.parsers.ProtoParser;
 import game.multi.receive.handlers.*;
 
 import java.util.List;
@@ -65,14 +65,14 @@ public class ReceiverFactory {
     }
 
     private static final Map<Messages, MessageHandler> messageHandlerMap = Map.of(
-            Messages.ACK, new AckMessage(),
-            Messages.ANNOUNCMENT, new AnnouncmentMessage(),
-            Messages.ERROR, new ErrorMessage(),
-            Messages.JOIN, new JoinMessage(),
-            Messages.PING, new PingMessage(),
-            Messages.ROLE_CHANGE, new RoleChangeMessage(),
-            Messages.STATE, new StateMessage(),
-            Messages.STEER, new SteerMessage()
+            Messages.ACK, new AckMessageHandler(),
+            Messages.ANNOUNCMENT, new AnnouncmentMessageHandler(),
+            Messages.ERROR, new ErrorMessageHandler(),
+            Messages.JOIN, new JoinMessageHandler(),
+            Messages.PING, new PingMessageHandler(),
+            Messages.ROLE_CHANGE, new RoleChangeMessageHandler(),
+            Messages.STATE, new StateMessageHandler(),
+            Messages.STEER, new SteerMessageHandler()
     );
 
     public Game getGame() {

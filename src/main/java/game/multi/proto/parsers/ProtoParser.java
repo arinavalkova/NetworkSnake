@@ -1,4 +1,4 @@
-package game.multi.proto.parses;
+package game.multi.proto.parsers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.GameMessage;

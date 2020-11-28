@@ -5,7 +5,7 @@ import game.multi.field.CellRole;
 import game.multi.field.GameField;
 import game.multi.food.FoodStorage;
 import game.multi.players.*;
-import game.multi.proto.parses.ProtoParser;
+import game.multi.proto.parsers.ProtoParser;
 import game.multi.sender.milticast.ConfirmSender;
 import game.multi.snake.Snake;
 import game.multi.snake.mover.SnakeMover;
