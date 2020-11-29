@@ -4,9 +4,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
 import dto.GameState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GenerateStateMsg {
 
-    private GameMessage gameMessage;
+    private GameState gameState;
     private String line;
     /** Генерирует пример сообщения с состоянием, соответствующим картинке example1.png */
     public void testGenerateStateMsg() throws InvalidProtocolBufferException {
@@ -20,9 +23,9 @@ public class GenerateStateMsg {
                 .setHeadDirection(Direction.LEFT)
                 .setState(GameState.Snake.SnakeState.ALIVE)
                 .addPoints(coord(5, 1)) // голова
-                .addPoints(coord(3, 0))
-                .addPoints(coord(0, 2))
-                .addPoints(coord(-4, 0))
+                .addPoints(coord(5, 2))
+                .addPoints(coord(5, 3))
+                .addPoints(coord(5, 4))
                 .build();
         // Единственный игрок в игре, он же MASTER
         GamePlayer playerBob = GamePlayer.newBuilder()
@@ -54,16 +57,44 @@ public class GenerateStateMsg {
 
         byte[] bytesToSendViaDatagramPacket = gameMessage.toByteArray();
         GameMessage receivedGameMessage = GameMessage.parseFrom(bytesToSendViaDatagramPacket);
-        this.gameMessage = receivedGameMessage;
-        System.out.println(this.gameMessage.getMsgSeq());
-        System.out.println(this.gameMessage.getState().getState().getFoodsCount());
-        this.gameMessage = GameMessage.newBuilder(gameMessage)
-                        .setMsgSeq(gameMessage.getMsgSeq() + 1).build();
-        System.out.println(this.gameMessage.getMsgSeq());
-        System.out.println(this.gameMessage.getState().getState().getFoodsCount());
+        this.gameState = receivedGameMessage.getState().getState();
+        GameState.Snake snake3 = moveSnake(snake2, coord(5, 0));
+        this.gameState = GameState.newBuilder(this.gameState)
+
+
+
+//        GameState.Snake snake3 = moveSnake(snake2, coord(5, 0));
+//        List<GameState.Snake> oldSnakes = GameMessage.newBuilder(this.gameMessage)
+//                .getState()
+//                .getState()
+//                .getSnakesList();
+//        List<GameState.Snake> newSnakes = new ArrayList<>();
+//        newSnakes.add(snake3);
+//
+//        GameState state2 = GameMessage.newBuilder(this.gameMessage)
+//                .getState()
+//                .getState()
+//                .toBuilder()
+//                .clearSnakes()
+//                .addAllSnakes(newSnakes).build();
+//        this.gameMessage = GameMessage.newBuilder(this.gameMessage)
+//                .setState(state)
+//        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
     }
 
     private GameState.Coord coord(int x, int y) {
         return GameState.Coord.newBuilder().setX(x).setY(y).build();
+    }
+
+    public GameState.Snake moveSnake(GameState.Snake snake, GameState.Coord moveCoord) {
+        List<GameState.Coord> oldCoords = snake.getPointsList();
+        List<GameState.Coord> newCoords = new ArrayList<>();
+        newCoords.add(moveCoord);
+        newCoords.addAll(oldCoords);
+        newCoords.remove(newCoords.size() - 1);
+        return GameState.Snake.newBuilder(snake)
+                .clearPoints()
+                .addAllPoints(newCoords)
+                .build();
     }
 }

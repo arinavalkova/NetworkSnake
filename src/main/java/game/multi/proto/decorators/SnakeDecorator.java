@@ -4,6 +4,7 @@ import dto.Direction;
 import dto.GameState;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SnakeDecorator {
     private GameState.Snake snake;
@@ -18,12 +19,11 @@ public class SnakeDecorator {
                 .build();
     }
 
-    public void updateCoordsList(ArrayList<GameState.Coord> coords) {
+    public void updateCoordsList(ArrayList<GameState.Coord> coords) {//////////////
         GameState.Snake.Builder snakeBuilder = GameState.Snake.newBuilder(snake).clearPoints();
         for (int i = 0; i < coords.size(); i++){
             snakeBuilder.setPoints(i, coords.get(i));
         }
-        //протестить метод удаления только первой и последней клетки
         snake = snakeBuilder.build();
     }
 
@@ -32,4 +32,16 @@ public class SnakeDecorator {
                 .setHeadDirection(direction)
                 .build();
     }
+
+    public void moveSnake(GameState.Coord moveCoord) {
+        List<GameState.Coord> coords = snake.getPointsList();
+        coords.add(0, moveCoord);
+        coords.remove(coords.size() - 1);
+        snake = GameState.Snake.newBuilder(snake)
+                .clearPoints()
+                .addAllPoints(coords)
+                .build();
+    }
+
+    //eat
 }

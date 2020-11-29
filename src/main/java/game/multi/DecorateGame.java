@@ -1,9 +1,7 @@
 package game.multi;
 
-import dto.GameConfig;
-import dto.GamePlayer;
-import dto.NodeRole;
-import dto.PlayerType;
+import dto.*;
+import game.multi.proto.decorators.GameStateDecorator;
 import graphics.controllers.GameWindowController;
 import graphics.data.JoinGameWindowData;
 import graphics.data.NewGameWindowData;
@@ -31,9 +29,7 @@ public class DecorateGame {
         this.game = new Game(
                 SceneController.getKeyController(),
                 gameWindowController,
-                network,
-                newGameConfig,
-                newGamePlayer
+                network
         );
         game.start();
     }

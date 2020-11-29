@@ -8,6 +8,7 @@ import game.multi.field.CellRole;
 import game.multi.field.GameField;
 import game.multi.food.FoodStorage;
 import game.multi.players.*;
+import game.multi.proto.decorators.GameStateDecorator;
 import game.multi.proto.parsers.ProtoParser;
 import game.multi.sender.milticast.ConfirmSender;
 import game.multi.snake.Snake;
@@ -50,11 +51,10 @@ public class Game implements ActionListener {
     public Game(
             KeyController keyController,
             GameWindowController gameWindowController,
-            Network network,
-            GameStateDecorator gameStateDecorator) {
+            Network network//,
+            /*GameStateDecorator gameStateDecorator*/) {
         this.issued_id = 0;
         this.gameWindowController = gameWindowController;
-        this.gameConfig = gameState.getConfig();
         this.network = network;
         GameField gameField = new GameField(gameConfig.getWidth(), gameConfig.getHeight());
         this.gameFieldDrawer = new GameFieldDrawer(
@@ -78,7 +78,7 @@ public class Game implements ActionListener {
         );
         //this.protoParser = new ProtoParser();
         this.msg_seq = 0;
-        this.localGamePlayer = newGamePlayer;
+        //this.localGamePlayer = newGamePlayer;
         //grab master info
     }
 
@@ -93,7 +93,7 @@ public class Game implements ActionListener {
             stop();
         }
         playersMap.get(nodeRole).play(this);
-        gameWindowController.updatePlayersList(); // <-- give here ArrayList of GamePlayerDecorator's
+        //gameWindowController.updatePlayersList(); // <-- give here ArrayList of GamePlayerDecorator's
         getGameFieldDrawer().redrawField();
         getGameFieldDrawer().draw(CellRole.FOOD);
         getGameFieldDrawer().draw(CellRole.SNAKE);
