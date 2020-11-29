@@ -2,7 +2,9 @@ package graphics.controllers;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
+import dto.GamePlayer;
 import dto.NodeRole;
+import game.multi.proto.decorators.GamePlayerDecorator;
 import graphics.data.NewGameWindowData;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -13,26 +15,26 @@ import graphics.loaders.WindowNames;
 import graphics.loaders.SceneController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameWindowController {
 
     private final static String VIEW_MODE = "View";
     private final static String PLAY_MODE = "Play";
+    private final static String PLUS = "+";
+    private final static String X = "x";
 
     @FXML
     private Button changeRoleButton;
 
     @FXML
-    private Label pointsField;
-
-    @FXML
     private Canvas canvas;
 
     @FXML
-    private Label hostField;
+    private Label masterField;
 
     @FXML
-    private JFXListView<?> playersListView;
+    private JFXListView<String> playersListView;
 
     @FXML
     private Label fieldSizeField;
@@ -49,7 +51,6 @@ public class GameWindowController {
     public void initialize() {
         addChangeRoleButtonHandler();
         addBackButtonHandler();
-        setPoints(0);
     }
 
     private void addChangeRoleButtonHandler() {
@@ -68,8 +69,6 @@ public class GameWindowController {
         Platform.runLater(() ->fieldSizeField.setText(width + " X " + height));
     }
 
-    //foodField setter
-
     private void addBackButtonHandler() {
         backToMenuButton.setOnAction(e -> {
             try {
@@ -80,16 +79,27 @@ public class GameWindowController {
         });
     }
 
-    public void setPoints(int points) {
-        Platform.runLater(() -> pointsField.setText(String.valueOf(points)));
-    }
-
     public Canvas getCanvas() {
         return canvas;
     }
 
     public NodeRole getButtonNodeRole() {
         return nodeRole;
+    }
+
+    public void setMasterField(String masterName) {
+        masterField.setText(masterName);
+    }
+
+    public void setFoodField(int food_static, float food_per_player) {
+        foodField.setText(food_static + PLUS + food_per_player + X);
+    }
+
+    public void updatePlayersList(ArrayList<GamePlayerDecorator> gamePlayerArrayList) {
+        playersListView.getItems().clear();
+        for (GamePlayerDecorator currentGamePlayer : gamePlayerArrayList) {
+            playersListView.getItems().add(currentGamePlayer.toString());
+        }
     }
 }
 

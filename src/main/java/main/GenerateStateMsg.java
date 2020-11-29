@@ -1,13 +1,15 @@
 package main;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
-import org.junit.Assert;
-import org.junit.Test;
 import dto.GameState;
 
 public class GenerateStateMsg {
+
+    private GameMessage gameMessage;
+    private String line;
     /** Генерирует пример сообщения с состоянием, соответствующим картинке example1.png */
-    public void testGenerateStateMsg() {
+    public void testGenerateStateMsg() throws InvalidProtocolBufferException {
         GameConfig config = GameConfig.newBuilder()
                 .setWidth(10)
                 .setHeight(10)
@@ -51,12 +53,14 @@ public class GenerateStateMsg {
                 .build();
 
         byte[] bytesToSendViaDatagramPacket = gameMessage.toByteArray();
-
-        if(81 ==  bytesToSendViaDatagramPacket.length) {
-            System.out.println("GOOD");
-        } else {
-            System.out.println("BAD");
-        }
+        GameMessage receivedGameMessage = GameMessage.parseFrom(bytesToSendViaDatagramPacket);
+        this.gameMessage = receivedGameMessage;
+        System.out.println(this.gameMessage.getMsgSeq());
+        System.out.println(this.gameMessage.getState().getState().getFoodsCount());
+        this.gameMessage = GameMessage.newBuilder(gameMessage)
+                        .setMsgSeq(gameMessage.getMsgSeq() + 1).build();
+        System.out.println(this.gameMessage.getMsgSeq());
+        System.out.println(this.gameMessage.getState().getState().getFoodsCount());
     }
 
     private GameState.Coord coord(int x, int y) {

@@ -9,12 +9,12 @@ import java.util.ArrayList;
 
 public class FoodStorage {
     private final int foodStatic;
-    private final int foodPerPlayer;
+    private final float foodPerPlayer;
     private final GameField gameField;
     private final ArrayList<Cell> foodController;
 
 
-    public FoodStorage(int foodStatic, int foodPerPlayer, GameField gameField) {
+    public FoodStorage(int foodStatic, float foodPerPlayer, GameField gameField) {
         this.foodStatic = foodStatic;
         this.foodPerPlayer = foodPerPlayer;
         this.gameField = gameField;

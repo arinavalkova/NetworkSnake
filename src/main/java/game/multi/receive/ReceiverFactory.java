@@ -50,7 +50,7 @@ public class ReceiverFactory {
         this.messagesBuffer = new CopyOnWriteArrayList<>();
         this.waitingForProcessingMessages = new CopyOnWriteArrayList<>();
         this.currentGames = new CurrentGames();
-        this.protoParser = game.getProtoParser();
+        //this.protoParser = game.getProtoParser();
     }
 
     public void start() {

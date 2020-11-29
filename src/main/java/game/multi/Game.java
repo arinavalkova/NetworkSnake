@@ -1,5 +1,8 @@
 package game.multi;
 
+import dto.GameConfig;
+import dto.GamePlayer;
+import dto.GameState;
 import dto.NodeRole;
 import game.multi.field.CellRole;
 import game.multi.field.GameField;
@@ -22,60 +25,60 @@ import java.util.Map;
 public class Game implements ActionListener {
     private final GameWindowController gameWindowController;
     private final GameFieldDrawer gameFieldDrawer;
-    private final int stateDelay;
-    private NodeRole nodeRole;
     private final Network network;
-    private final int pingDelay;
-    private final int nodeTimeOut;
-    private final double deadFoodProb;
     private final SnakeMover snakeMover;
     private final Timer mainTimer;
     private final KeyController keyController;
     private final ConfirmSender confirmSender;
-    private final ProtoParser protoParser;
+    //private final ProtoParser protoParser;
+
+    private GameConfig gameConfig;
+    private GamePlayer localGamePlayer;
+
+
+    private NodeRole nodeRole;
+
     private int msg_seq;
+    private int issued_id;
+
     private int my_id;
     private int master_id;
     private int deputy_id;
 
     private boolean gameOver = false;
 
-    //master info
-
     public Game(
             KeyController keyController,
             GameWindowController gameWindowController,
             Network network,
-            NodeRole nodeRole,
-            int fieldWidth,
-            int fieldHeight,
-            int foodStatic,
-            int foodPerPlayer,
-            int stateDelay,
-            double deadFoodProb,
-            int pingDelay,
-            int nodeTimeOut
-    ) {
+            GameStateDecorator gameStateDecorator) {
+        this.issued_id = 0;
         this.gameWindowController = gameWindowController;
-        GameField gameField = new GameField(fieldWidth, fieldHeight);
+        this.gameConfig = gameState.getConfig();
+        this.network = network;
+        GameField gameField = new GameField(gameConfig.getWidth(), gameConfig.getHeight());
         this.gameFieldDrawer = new GameFieldDrawer(
                 gameWindowController.getCanvas().getGraphicsContext2D(),
                 gameField
         );
-        this.stateDelay = stateDelay;
-        this.nodeRole = nodeRole;
-        this.network = network;
-        this.pingDelay = pingDelay;
-        this.nodeTimeOut = nodeTimeOut;
-        this.deadFoodProb = deadFoodProb;
         Snake snake = new Snake(gameField);
-        FoodStorage foodStorage = new FoodStorage(foodStatic, foodPerPlayer, gameField);
+        FoodStorage foodStorage = new FoodStorage(
+                gameConfig.getFoodStatic(),
+                gameConfig.getFoodPerPlayer(),
+                gameField
+        );
         snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
-        this.mainTimer = new Timer(stateDelay, this);
+        this.mainTimer = new Timer(gameConfig.getStateDelayMs(), this);
         this.keyController = keyController;
-        this.confirmSender = new ConfirmSender(pingDelay, nodeTimeOut, network, this);
-        this.protoParser = new ProtoParser();
+        this.confirmSender = new ConfirmSender(
+                gameConfig.getPingDelayMs(),
+                gameConfig.getNodeTimeoutMs(),
+                network,
+                this
+        );
+        //this.protoParser = new ProtoParser();
         this.msg_seq = 0;
+        this.localGamePlayer = newGamePlayer;
         //grab master info
     }
 
@@ -90,7 +93,7 @@ public class Game implements ActionListener {
             stop();
         }
         playersMap.get(nodeRole).play(this);
-        //getGameWindowController().setPoints(points);
+        gameWindowController.updatePlayersList(); // <-- give here ArrayList of GamePlayerDecorator's
         getGameFieldDrawer().redrawField();
         getGameFieldDrawer().draw(CellRole.FOOD);
         getGameFieldDrawer().draw(CellRole.SNAKE);
@@ -145,12 +148,16 @@ public class Game implements ActionListener {
         return confirmSender;
     }
 
-    public ProtoParser getProtoParser() {
-        return protoParser;
-    }
+//    public ProtoParser getProtoParser() {
+//        return protoParser;
+//    }
 
     public int getAndIncMsgSeq() {
         return msg_seq++;
+    }
+
+    public int getAndIncIssuedId() {
+        return issued_id++;
     }
 
     public SocketAddress getMasterSocketAddress() {
@@ -167,5 +174,13 @@ public class Game implements ActionListener {
 
     public int getDeputy_id() {
         return deputy_id;
+    }
+
+    public GameConfig getGameConfig() {
+        return gameConfig;
+    }
+
+    public void setGameConfig(GameConfig gameConfig) {
+        this.gameConfig = gameConfig;
     }
 }

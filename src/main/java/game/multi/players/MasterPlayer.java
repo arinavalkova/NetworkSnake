@@ -16,7 +16,7 @@ public class MasterPlayer implements Player {
             game.setNodeRole(NodeRole.VIEWER);
             return;
         }
-        Server.getSenderMulticast().updateGameStateInvite("Hello");     /* Invite send thread updating */
+        //Server.getSenderMulticast().updateGameStateInvite("Hello");     /* Invite send thread updating */
         int points;//play check all which uplyed by receiver
         if ((points = game.getSnakeMover().start()) == -1) {
             Server.getSenderMulticast().stop();

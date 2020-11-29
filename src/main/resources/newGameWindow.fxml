@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -71,5 +72,11 @@
          </font>
       </Label>
       <JFXSlider fx:id="nodeTimeOutSlider" layoutX="519.0" layoutY="513.0" max="10000.0" min="1.0" value="800.0" />
+      <Label layoutX="300.0" layoutY="546.0" text="Name">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="nameField" layoutX="521.0" layoutY="546.0" />
    </children>
 </AnchorPane>

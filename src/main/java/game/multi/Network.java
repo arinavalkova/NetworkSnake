@@ -70,4 +70,8 @@ public class Network {
         unicastSocket.close();
         multicastSocket.close();
     }
+
+    public int getUnicastSocketPort() {
+        return unicastSocket.getLocalPort();
+    }
 }

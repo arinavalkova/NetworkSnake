@@ -1,5 +1,13 @@
 package graphics.data;
 
 public class JoinGameWindowData {
-    //static data about game, from list, which initialize when JOIN button clicked
+    private static String name;
+
+    public static String getName() {
+        return name;
+    }
+
+    public static void setName(String name) {
+        JoinGameWindowData.name = name;
+    }
 }

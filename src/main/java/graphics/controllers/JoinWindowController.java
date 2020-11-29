@@ -3,6 +3,7 @@ package graphics.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXTextField;
 import dto.NodeRole;
 import game.multi.Server;
 import graphics.data.JoinGameWindowData;
@@ -14,6 +15,9 @@ import javafx.fxml.FXML;
 import java.io.IOException;
 
 public class JoinWindowController {
+
+    @FXML
+    private JFXTextField nameField;
 
     @FXML
     private JFXButton backButton;
@@ -85,6 +89,6 @@ public class JoinWindowController {
     }
 
     private void loadDataFromWindow() {
-
+        JoinGameWindowData.setName(nameField.getText());
     }
 }

@@ -7,9 +7,10 @@ public class NewGameWindowData {
     private static int      foodStatic;
     private static int      foodPerPlayer;
     private static int      stateDelay;
-    private static double   deadFoodProb;
+    private static float    deadFoodProb;
     private static int      pingDelay;
     private static int      nodeTimeOut;
+    private static String   name;
 
     public static int getFieldWidth() {
         return fieldWidth;
@@ -51,11 +52,11 @@ public class NewGameWindowData {
         NewGameWindowData.stateDelay = stateDelay;
     }
 
-    public static double getDeadFoodProb() {
+    public static float getDeadFoodProb() {
         return deadFoodProb;
     }
 
-    public static void setDeadFoodProb(double deadFoodProb) {
+    public static void setDeadFoodProb(float deadFoodProb) {
         NewGameWindowData.deadFoodProb = deadFoodProb;
     }
 
@@ -73,5 +74,13 @@ public class NewGameWindowData {
 
     public static void setNodeTimeOut(int nodeTimeOut) {
         NewGameWindowData.nodeTimeOut = nodeTimeOut;
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    public static void setName(String name) {
+        NewGameWindowData.name = name;
     }
 }
