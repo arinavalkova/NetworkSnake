@@ -3,6 +3,8 @@ package main;
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
 import dto.GameState;
+import game.multi.proto.decorators.GameStateDecorator;
+import game.multi.proto.decorators.SnakeDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +58,10 @@ public class GenerateStateMsg {
                 .build();
 
         byte[] bytesToSendViaDatagramPacket = gameMessage.toByteArray();
-        GameMessage receivedGameMessage = GameMessage.parseFrom(bytesToSendViaDatagramPacket);
-        this.gameState = receivedGameMessage.getState().getState();
-        GameState.Snake snake3 = moveSnake(snake2, coord(5, 0));
-        this.gameState = GameState.newBuilder(this.gameState)
+//        GameMessage receivedGameMessage = GameMessage.parseFrom(bytesToSendViaDatagramPacket);
+//        this.gameState = receivedGameMessage.getState().getState();
+//        GameState.Snake snake3 = moveSnake(snake2, coord(5, 0));
+//        this.gameState = GameState.newBuilder(this.gameState)
 
 
 
@@ -80,6 +82,12 @@ public class GenerateStateMsg {
 //        this.gameMessage = GameMessage.newBuilder(this.gameMessage)
 //                .setState(state)
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
+
+        SnakeDecorator snakeDecorator = new SnakeDecorator(state);
+        snakeDecorator.updateSnakeDirection(0, Direction.DOWN);
+        this.gameState = snakeDecorator.getGameState();
+        System.out.println(this.gameState.getSnakes(0).getHeadDirection());
+
     }
 
     private GameState.Coord coord(int x, int y) {
