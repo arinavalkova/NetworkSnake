@@ -23,6 +23,7 @@ public class MasterPlayer implements Player {
             //send deputy that he is master now
             //send deputy also all raw messages
             //send deputy that my snake is ZOMBIE
+            //stop all master sendings
             game.setGameOver(true);
         }
         //send to all players GameState

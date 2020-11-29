@@ -1,5 +1,6 @@
 package game.multi.sender.milticast;
 
+import game.multi.Game;
 import game.multi.Network;
 
 import java.net.SocketAddress;
@@ -11,7 +12,6 @@ public class ConfirmSender {
     private Network network;
     private Long ping_delay_ms;
     private Long node_timeout_ms;
-    private int msg_seq;
     private Map<Integer, ByteMessage> unconfirmedMessages;
 
     private final Thread checkConfirmThread = new Thread(() -> {
@@ -36,8 +36,7 @@ public class ConfirmSender {
         }
     });
 
-    public ConfirmSender(int ping_delay_ms, int node_timeout_ms, Network network) {
-        this.msg_seq = 0;
+    public ConfirmSender(int ping_delay_ms, int node_timeout_ms, Network network, Game game) {
         this.network = network;
         this.ping_delay_ms = (long) ping_delay_ms;
         this.node_timeout_ms = (long) node_timeout_ms;
@@ -45,8 +44,8 @@ public class ConfirmSender {
         checkConfirmThread.start();
     }
 
-    public void send(byte[] message, SocketAddress socketAddress) {
-        addMessageForWaitingConfirming(msg_seq++, message, socketAddress);
+    public void send(int msg_seq, byte[] message, SocketAddress socketAddress) {
+        addMessageForWaitingConfirming(msg_seq, message, socketAddress);
         network.sendToSocket(message, socketAddress);
     }
 
@@ -60,5 +59,9 @@ public class ConfirmSender {
         synchronized (unconfirmedMessages) {
             unconfirmedMessages.remove(messageSeq);
         }
+    }
+
+    public void stop() {
+        checkConfirmThread.interrupt();
     }
 }

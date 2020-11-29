@@ -1,37 +1,37 @@
 package graphics.controllers;
 
-import game.multi.snake.mover.MoveDirection;
+import dto.Direction;
 import javafx.scene.input.KeyCode;
 
 public class KeyController{
-    private MoveDirection key = MoveDirection.UP;
-    private MoveDirection supposedKey = MoveDirection.UP;
+    private Direction key = Direction.UP;
+    private Direction supposedKey = Direction.UP;
 
-    public MoveDirection getKey() {
+    public Direction getKey() {
         return setKeyIfAllowed(supposedKey);
     }
 
     public void setKeyPressed(KeyCode key) {
         System.out.println("Pressed: " + key);
         if (key == KeyCode.W) {
-            supposedKey = MoveDirection.UP;
+            supposedKey = Direction.UP;
         } else if (key == KeyCode.S) {
-            supposedKey = MoveDirection.DOWN;
+            supposedKey = Direction.DOWN;
         } else if (key == KeyCode.A) {
-            supposedKey = MoveDirection.LEFT;
+            supposedKey = Direction.LEFT;
         } else if (key == KeyCode.D) {
-            supposedKey = MoveDirection.RIGHT;
+            supposedKey = Direction.RIGHT;
         }
     }
 
-    public MoveDirection setKeyIfAllowed(MoveDirection supposedDirection) {
-        if (supposedDirection == MoveDirection.DOWN && key != MoveDirection.UP) {
+    public Direction setKeyIfAllowed(Direction supposedDirection) {
+        if (supposedDirection == Direction.DOWN && key != Direction.UP) {
             key = supposedDirection;
-        } else if (supposedDirection == MoveDirection.UP && key != MoveDirection.DOWN) {
+        } else if (supposedDirection == Direction.UP && key != Direction.DOWN) {
             key = supposedDirection;
-        } else if (supposedDirection == MoveDirection.LEFT && key != MoveDirection.RIGHT) {
+        } else if (supposedDirection == Direction.LEFT && key != Direction.RIGHT) {
             key = supposedDirection;
-        } else if (supposedDirection == MoveDirection.RIGHT && key != MoveDirection.LEFT) {
+        } else if (supposedDirection == Direction.RIGHT && key != Direction.LEFT) {
             key = supposedDirection;
         }
         return key;

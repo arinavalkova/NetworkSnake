@@ -1,9 +1,8 @@
 package game.multi.players;
 
+import dto.Direction;
 import dto.NodeRole;
 import game.multi.Game;
-import game.multi.field.CellRole;
-import game.multi.snake.mover.MoveDirection;
 
 public class NormalPlayer implements Player {
     @Override
@@ -13,7 +12,7 @@ public class NormalPlayer implements Player {
             game.setNodeRole(NodeRole.VIEWER);
             return;
         }
-        MoveDirection moveDirection = game.getKeyController().getKey();
+        Direction moveDirection = game.getKeyController().getKey();
         //send to MASTER this move direction
         //game.getGameWindowController().setPoints(points);
     }

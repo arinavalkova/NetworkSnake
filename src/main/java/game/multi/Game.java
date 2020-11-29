@@ -16,6 +16,7 @@ import graphics.drawers.GameFieldDrawer;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.SocketAddress;
 import java.util.Map;
 
 public class Game implements ActionListener {
@@ -32,6 +33,10 @@ public class Game implements ActionListener {
     private final KeyController keyController;
     private final ConfirmSender confirmSender;
     private final ProtoParser protoParser;
+    private int msg_seq;
+    private int my_id;
+    private int master_id;
+    private int deputy_id;
 
     private boolean gameOver = false;
 
@@ -68,8 +73,9 @@ public class Game implements ActionListener {
         snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
         this.mainTimer = new Timer(stateDelay, this);
         this.keyController = keyController;
-        this.confirmSender = new ConfirmSender(pingDelay, nodeTimeOut, network);
+        this.confirmSender = new ConfirmSender(pingDelay, nodeTimeOut, network, this);
         this.protoParser = new ProtoParser();
+        this.msg_seq = 0;
         //grab master info
     }
 
@@ -141,5 +147,25 @@ public class Game implements ActionListener {
 
     public ProtoParser getProtoParser() {
         return protoParser;
+    }
+
+    public int getAndIncMsgSeq() {
+        return msg_seq++;
+    }
+
+    public SocketAddress getMasterSocketAddress() {
+        return null;
+    }
+
+    public int getMy_id() {
+        return my_id;
+    }
+
+    public int getMaster_id() {
+        return master_id;
+    }
+
+    public int getDeputy_id() {
+        return deputy_id;
     }
 }

@@ -1,20 +1,42 @@
 package game.multi.players;
 
+import dto.Direction;
 import dto.NodeRole;
 import game.multi.Game;
-import game.multi.field.CellRole;
-import game.multi.snake.mover.MoveDirection;
+import game.multi.proto.creators.RoleChangeMessageCreator;
+import game.multi.proto.creators.SteerMessageCreator;
 
 public class DeputyPlayer implements Player {
     @Override
     public void play(Game game) {
         if (game.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
-            //send that my snake is ZOMBIE
+            int msg_seq = game.getAndIncMsgSeq();
+            game.getConfirmSender().send(
+                    msg_seq,
+                    new RoleChangeMessageCreator(
+                            msg_seq,
+                            game.getMy_id(),
+                            game.getMaster_id(),
+                            NodeRole.VIEWER,
+                            null
+                    ).getBytes(),
+                    game.getMasterSocketAddress()
+            );
             game.setNodeRole(NodeRole.VIEWER);
             return;
         }
 
-        MoveDirection moveDirection = game.getKeyController().getKey();
-        //send to MASTER this move direction
+        Direction moveDirection = game.getKeyController().getKey();
+        int msg_seq = game.getAndIncMsgSeq();
+        game.getConfirmSender().send(
+                msg_seq,
+                new SteerMessageCreator(
+                        msg_seq,
+                        game.getMy_id(),
+                        null,
+                        moveDirection
+                ).getBytes(),
+                game.getMasterSocketAddress()
+        );
     }
 }

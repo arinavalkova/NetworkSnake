@@ -1,5 +1,6 @@
 package game.multi.snake.mover;
 
+import dto.Direction;
 import game.multi.field.Cell;
 import game.multi.field.CellRole;
 import game.multi.field.GameField;
@@ -24,12 +25,12 @@ public class SnakeMover {
     }
 
     public Cell move(Cell headCell) {
-        MoveDirection moveDirection = keyController.getKey();
-        if (moveDirection == MoveDirection.RIGHT) {
+        Direction moveDirection = keyController.getKey();
+        if (moveDirection == Direction.RIGHT) {
             return checkOutOfBoundary(headCell.getX() + 1, headCell.getY());
-        } else if (moveDirection == MoveDirection.LEFT) {
+        } else if (moveDirection == Direction.LEFT) {
             return checkOutOfBoundary(headCell.getX() - 1, headCell.getY());
-        } else if (moveDirection == MoveDirection.UP) {
+        } else if (moveDirection == Direction.UP) {
             return checkOutOfBoundary(headCell.getX(), headCell.getY() - 1);
         }
         return checkOutOfBoundary(headCell.getX(), headCell.getY() + 1);
