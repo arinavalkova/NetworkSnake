@@ -50,14 +50,24 @@ public class SnakeMover {
     }
 
     public int start() {
-        Cell cell = move(snake.getHead());
-        if (cell.findRole(CellRole.SNAKE)) return -1;
-        if (foodStorage.findAndDelete(cell)) {
-            snake.eat(cell);
-            points++;
-        } else {
-            snake.move(cell);
-        }
-        return points;
+//        Cell cell = move(snake.getHead());
+//        if (cell.findRole(CellRole.SNAKE)) return -1;
+//        if (foodStorage.findAndDelete(cell)) {
+//            snake.eat(cell);
+//            points++;
+//        } else {
+//            snake.move(cell);
+//        }
+//        return points;
+        //получаем все сообщения steer message
+        //получить свое направление с keyController
+        //продвигаем зомби
+        //выполняем каждое из них, запоминая вернувшиеся клетки для проверки и id_player змейки
+        //проверяем: если клетка совпадает с клеткой еды ->> убираем  клетку еды, делаем на id_player eat()
+        //           если клетка совпадает с какой-нибудь клеткой другой змеи из той же map, то оба эти id считаем умершими
+        //                удаляем змеек и генерим еду с них
+        //           если клетка ни с чем из вышеперечисленного не совпадает, то просто сделать move()
+
+        return 0;
     }
 }

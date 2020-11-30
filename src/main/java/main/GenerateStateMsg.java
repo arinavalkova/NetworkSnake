@@ -3,11 +3,7 @@ package main;
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
 import dto.GameState;
-import game.multi.proto.decorators.GameStateDecorator;
 import game.multi.proto.decorators.SnakeDecorator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GenerateStateMsg {
 
@@ -21,7 +17,7 @@ public class GenerateStateMsg {
                 // Все остальные параметры имеют значения по умолчанию
                 .build();
         GameState.Snake snake = GameState.Snake.newBuilder()
-                .setPlayerId(1)
+                .setPlayerId(10)
                 .setHeadDirection(Direction.LEFT)
                 .setState(GameState.Snake.SnakeState.ALIVE)
                 .addPoints(coord(5, 1)) // голова
@@ -84,25 +80,13 @@ public class GenerateStateMsg {
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
 
         SnakeDecorator snakeDecorator = new SnakeDecorator(state);
-        snakeDecorator.updateSnakeDirection(0, Direction.DOWN);
+        snakeDecorator.updateSnakeDirectionByPlayerId(10, Direction.DOWN);
+        System.out.println(snakeDecorator.getSnakeDirectionByPlayerId(10));
         this.gameState = snakeDecorator.getGameState();
-        System.out.println(this.gameState.getSnakes(0).getHeadDirection());
-
+        System.out.println(this.gameState.getSnakesList());
     }
 
     private GameState.Coord coord(int x, int y) {
         return GameState.Coord.newBuilder().setX(x).setY(y).build();
-    }
-
-    public GameState.Snake moveSnake(GameState.Snake snake, GameState.Coord moveCoord) {
-        List<GameState.Coord> oldCoords = snake.getPointsList();
-        List<GameState.Coord> newCoords = new ArrayList<>();
-        newCoords.add(moveCoord);
-        newCoords.addAll(oldCoords);
-        newCoords.remove(newCoords.size() - 1);
-        return GameState.Snake.newBuilder(snake)
-                .clearPoints()
-                .addAllPoints(newCoords)
-                .build();
     }
 }

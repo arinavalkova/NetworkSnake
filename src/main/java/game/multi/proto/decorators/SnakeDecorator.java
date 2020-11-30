@@ -59,15 +59,59 @@ public class SnakeDecorator {
 
     }
 
-    public void updateSnakeDirection(int snakeId, Direction direction) {
+    public void updateSnakeDirectionByPlayerId(int playerId, Direction direction) {
+        int snakeId = getSnakeIdByPlayerId(playerId);
         gameState = GameState.newBuilder(gameState)
                 .setSnakes(snakeId,
                         gameState
                                 .getSnakes(snakeId)
-                                .toBuilder().setHeadDirection(direction).build()).build();
+                                .toBuilder()
+                                .setHeadDirection(direction)
+                                .build())
+                .build();
     }
 
     public GameState getGameState() {
         return gameState;
     }
+
+    public Direction getSnakeDirectionByPlayerId(int playerId) {
+        int snakeId = getSnakeIdByPlayerId(playerId);
+        return gameState
+                .getSnakes(snakeId)
+                .getHeadDirection();
+    }
+
+    public void updateSnakeStateByPlayerId(int playerId, GameState.Snake.SnakeState snakeState) {
+        int snakeId = getSnakeIdByPlayerId(playerId);
+        gameState = GameState.newBuilder(gameState)
+                .setSnakes(snakeId,
+                        gameState
+                                .getSnakes(snakeId)
+                                .toBuilder()
+                                .setState(snakeState)
+                                .build())
+                .build();
+    }
+
+    public GameState.Snake.SnakeState getSnakeStateByPlayerId(int playerId) {
+        int snakeId = getSnakeIdByPlayerId(playerId);
+        return gameState
+                .getSnakes(snakeId)
+                .getState();
+    }
+
+    public Integer getSnakeIdByPlayerId(int playerId) {
+        List<GameState.Snake> snakes = gameState.getSnakesList();
+        for (int i = 0; i < snakes.size(); i++) {
+            if (snakes.get(i).getPlayerId() == playerId)
+                return i;
+        }
+        return null;
+    }
+
+    //ищем совпадение клетки с какой-то другой змеей, возвращаем либо нулл либо id_player змеи
+
+    //продвижение зомби змеек, возвращение той же map
 }
+
