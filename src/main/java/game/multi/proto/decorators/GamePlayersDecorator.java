@@ -9,7 +9,7 @@ public class GamePlayersDecorator {
         this.gamePlayers = gamePlayers;
     }
 
-    public void updatePlayers(GamePlayers gamePlayers) {
-        //подкмать какой метод нужен все таки
+    public void addPlayer() {
+
     }
 }

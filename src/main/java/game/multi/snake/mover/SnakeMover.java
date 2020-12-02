@@ -24,31 +24,6 @@ public class SnakeMover {
         points = 0;
     }
 
-    public Cell move(Cell headCell) {
-        Direction moveDirection = keyController.getKey();
-        if (moveDirection == Direction.RIGHT) {
-            return checkOutOfBoundary(headCell.getX() + 1, headCell.getY());
-        } else if (moveDirection == Direction.LEFT) {
-            return checkOutOfBoundary(headCell.getX() - 1, headCell.getY());
-        } else if (moveDirection == Direction.UP) {
-            return checkOutOfBoundary(headCell.getX(), headCell.getY() - 1);
-        }
-        return checkOutOfBoundary(headCell.getX(), headCell.getY() + 1);
-    }
-
-    private Cell checkOutOfBoundary(int x, int y) {
-        if (x < 0) {
-            return gameField.getCell(gameField.getWidth() - 1, y);
-        } else if (x == gameField.getWidth()) {
-            return gameField.getCell(0, y);
-        } else if (y < 0) {
-            return gameField.getCell(x, gameField.getHeight() - 1);
-        } else if (y == gameField.getHeight()) {
-            return gameField.getCell(x, 0);
-        }
-        return gameField.getCell(x, y);
-    }
-
     public int start() {
 //        Cell cell = move(snake.getHead());
 //        if (cell.findRole(CellRole.SNAKE)) return -1;
@@ -63,10 +38,11 @@ public class SnakeMover {
         //получить свое направление с keyController
         //продвигаем зомби
         //выполняем каждое из них, запоминая вернувшиеся клетки для проверки и id_player змейки
-        //проверяем: если клетка совпадает с клеткой еды ->> убираем  клетку еды, делаем на id_player eat()
+        //проверяем: если клетка совпадает с клеткой еды ->> убираем  клетку еды, делаем на id_player eat() и генерим еду
         //           если клетка совпадает с какой-нибудь клеткой другой змеи из той же map, то оба эти id считаем умершими
-        //                удаляем змеек и генерим еду с них
+        //                удаляем змеек и генерим еду с них, если это та же змейка удаляем ее и генерим еду
         //           если клетка ни с чем из вышеперечисленного не совпадает, то просто сделать move()
+        //подумать над синхронизацией
 
         return 0;
     }

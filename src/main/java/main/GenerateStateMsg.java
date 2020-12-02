@@ -80,8 +80,7 @@ public class GenerateStateMsg {
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
 
         SnakeDecorator snakeDecorator = new SnakeDecorator(state);
-        snakeDecorator.updateSnakeDirectionByPlayerId(10, Direction.DOWN);
-        System.out.println(snakeDecorator.getSnakeDirectionByPlayerId(10));
+        snakeDecorator.addSnake(11);
         this.gameState = snakeDecorator.getGameState();
         System.out.println(this.gameState.getSnakesList());
     }
