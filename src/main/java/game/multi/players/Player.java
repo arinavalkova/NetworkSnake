@@ -1,7 +1,7 @@
 package game.multi.players;
 
-import game.multi.Game;
+import game.multi.GamePlay;
 
 public interface Player {
-    void play(Game game);
+    void play(GamePlay gamePlay);
 }

@@ -2,7 +2,7 @@ package game.multi.receive;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.GameMessage;
-import game.multi.Game;
+import game.multi.GamePlay;
 import game.multi.Network;
 import game.multi.proto.parsers.ProtoParser;
 import game.multi.receive.handlers.*;
@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ReceiverFactory {
     private Network network;
-    private Game game;
+    private GamePlay gamePlay;
     private ProtoParser protoParser;
 
     private final CurrentGames currentGames;
@@ -44,9 +44,9 @@ public class ReceiverFactory {
         }
     });
 
-    public ReceiverFactory(Network network, Game game) {
+    public ReceiverFactory(Network network, GamePlay gamePlay) {
         this.network = network;
-        this.game = game;
+        this.gamePlay = gamePlay;
         this.messagesBuffer = new CopyOnWriteArrayList<>();
         this.waitingForProcessingMessages = new CopyOnWriteArrayList<>();
         this.currentGames = new CurrentGames();
@@ -75,8 +75,8 @@ public class ReceiverFactory {
             Messages.STEER, new SteerMessageHandler()
     );
 
-    public Game getGame() {
-        return game;
+    public GamePlay getGame() {
+        return gamePlay;
     }
 
     public CurrentGames getCurrentGames() {

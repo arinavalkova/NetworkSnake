@@ -2,17 +2,17 @@ package game.multi.players;
 
 import dto.Direction;
 import dto.NodeRole;
-import game.multi.Game;
+import game.multi.GamePlay;
 
 public class NormalPlayer implements Player {
     @Override
-    public void play(Game game) {
-        if (game.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
+    public void play(GamePlay gamePlay) {
+        if (gamePlay.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
             //send to master that my snake ZOMBIE
-            game.setNodeRole(NodeRole.VIEWER);
+            gamePlay.setNodeRole(NodeRole.VIEWER);
             return;
         }
-        Direction moveDirection = game.getKeyController().getKey();
+        Direction moveDirection = gamePlay.getKeyController().getKey();
         //send to MASTER this move direction
         //game.getGameWindowController().setPoints(points);
     }

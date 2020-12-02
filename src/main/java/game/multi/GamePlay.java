@@ -1,18 +1,8 @@
 package game.multi;
 
-import dto.GameConfig;
-import dto.GamePlayer;
 import dto.GameState;
 import dto.NodeRole;
-import game.multi.field.CellRole;
-import game.multi.field.GameField;
-import game.multi.food.FoodStorage;
 import game.multi.players.*;
-import game.multi.proto.decorators.GameStateDecorator;
-import game.multi.proto.parsers.ProtoParser;
-import game.multi.sender.milticast.ConfirmSender;
-import game.multi.snake.Snake;
-import game.multi.snake.mover.SnakeMover;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.KeyController;
 import graphics.drawers.GameFieldDrawer;
@@ -23,19 +13,14 @@ import java.awt.event.ActionListener;
 import java.net.SocketAddress;
 import java.util.Map;
 
-public class Game implements ActionListener {
+public class GamePlay implements ActionListener {
     private final GameWindowController gameWindowController;
     private final GameFieldDrawer gameFieldDrawer;
-    private final Network network;
-    private final SnakeMover snakeMover;
     private final Timer mainTimer;
     private final KeyController keyController;
-    private final ConfirmSender confirmSender;
     //private final ProtoParser protoParser;
 
-    private GameConfig gameConfig;
-    private GamePlayer localGamePlayer;
-
+    private GameState gameState;
 
     private NodeRole nodeRole;
 
@@ -48,42 +33,33 @@ public class Game implements ActionListener {
 
     private boolean gameOver = false;
 
-    public Game(
-            KeyController keyController,
-            GameWindowController gameWindowController,
-            Network network//,
-            /*GameStateDecorator gameStateDecorator*/) {
+    public GamePlay(KeyController keyController
+            , GameWindowController gameWindowController
+            , GameState gameState, int id) {
+        this.my_id = id;
         this.issued_id = 0;
+        this.gameState = gameState;
         this.gameWindowController = gameWindowController;
-        this.network = network;
-        GameField gameField = new GameField(gameConfig.getWidth(), gameConfig.getHeight());
         this.gameFieldDrawer = new GameFieldDrawer(
                 gameWindowController.getCanvas().getGraphicsContext2D(),
-                gameField
+                gameState
         );
-        Snake snake = new Snake(gameField);
-        FoodStorage foodStorage = new FoodStorage(
-                gameConfig.getFoodStatic(),
-                gameConfig.getFoodPerPlayer(),
-                gameField
-        );
-        snakeMover = new SnakeMover(gameField, keyController, snake, foodStorage);
-        this.mainTimer = new Timer(gameConfig.getStateDelayMs(), this);
+        this.mainTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
         this.keyController = keyController;
-        this.confirmSender = new ConfirmSender(
-                gameConfig.getPingDelayMs(),
-                gameConfig.getNodeTimeoutMs(),
-                network,
-                this
-        );
-        //this.protoParser = new ProtoParser();
+//        this.confirmSender = new ConfirmSender(
+//                gameConfig.getPingDelayMs(),
+//                gameConfig.getNodeTimeoutMs(),
+//                network,
+//                this
+//        );
         this.msg_seq = 0;
-        //this.localGamePlayer = newGamePlayer;
         //grab master info
+        //установить тут NODE_ROLE
+        this.nodeRole = NodeRole.MASTER;
     }
 
     public void start() {
-        gameFieldDrawer.drawField();
+        gameFieldDrawer.drawField(gameState);
         mainTimer.start();
     }
 
@@ -93,14 +69,12 @@ public class Game implements ActionListener {
             stop();
         }
         playersMap.get(nodeRole).play(this);
-        //gameWindowController.updatePlayersList(); // <-- give here ArrayList of GamePlayerDecorator's
-        getGameFieldDrawer().redrawField();
-        getGameFieldDrawer().draw(CellRole.FOOD);
-        getGameFieldDrawer().draw(CellRole.SNAKE);
+        getGameFieldDrawer().redrawField(gameState);
     }
 
     public void stop() {
-        gameFieldDrawer.drawEndOfGame();
+        gameFieldDrawer.drawEndOfGame(gameState);
+        mainTimer.stop();
         //maybe something else for end of game
         //stop receiver unicast
     }
@@ -109,16 +83,8 @@ public class Game implements ActionListener {
         return gameFieldDrawer;
     }
 
-    public SnakeMover getSnakeMover() {
-        return snakeMover;
-    }
-
     public GameWindowController getGameWindowController() {
         return gameWindowController;
-    }
-
-    public Network getNetwork() {
-        return network;
     }
 
     public NodeRole getNodeRole() {
@@ -144,9 +110,9 @@ public class Game implements ActionListener {
         gameOver = state;
     }
 
-    public ConfirmSender getConfirmSender() {
-        return confirmSender;
-    }
+//    public ConfirmSender getConfirmSender() {
+//        return confirmSender;
+//    }
 
 //    public ProtoParser getProtoParser() {
 //        return protoParser;
@@ -176,11 +142,11 @@ public class Game implements ActionListener {
         return deputy_id;
     }
 
-    public GameConfig getGameConfig() {
-        return gameConfig;
+    public GameState getGameState() {
+        return gameState;
     }
 
-    public void setGameConfig(GameConfig gameConfig) {
-        this.gameConfig = gameConfig;
+    public void updateGameState(GameState gameState) {
+        this.gameState = gameState;
     }
 }

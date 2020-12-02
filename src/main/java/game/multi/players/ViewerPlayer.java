@@ -1,15 +1,14 @@
 package game.multi.players;
 
 import dto.NodeRole;
-import game.multi.Game;
-import game.multi.field.CellRole;
+import game.multi.GamePlay;
 
 public class ViewerPlayer implements Player {
     @Override
-    public void play(Game game) {
-        if (game.getGameWindowController().getButtonNodeRole() == NodeRole.NORMAL) {
+    public void play(GamePlay gamePlay) {
+        if (gamePlay.getGameWindowController().getButtonNodeRole() == NodeRole.NORMAL) {
             //send to master that i want to join
-            game.setNodeRole(NodeRole.NORMAL);
+            gamePlay.setNodeRole(NodeRole.NORMAL);
         }
     }
 }

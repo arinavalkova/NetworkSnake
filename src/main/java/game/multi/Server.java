@@ -10,19 +10,19 @@ import java.util.ArrayList;
 public class Server {
     private static Network network;
     private static ReceiverFactory receiverFactory;
-    private static Game game = null;
+    private static GamePlay gamePlay = null;
     private final static SenderMulticast senderMulticast = new SenderMulticast(network);
 
     public static void startNewGame(GameWindowController controller) {
-        DecorateGame decorateGame = new DecorateGame(controller, network);
-        decorateGame.decorateNewGame();
-        game = decorateGame.getGame();  //if doesn't work create updateGame method
+        GameDecorator gameDecorator = new GameDecorator(controller, network);
+        gameDecorator.decorateNewGame();
+        gamePlay = gameDecorator.getGame();  //if doesn't work create updateGame method
     }
 
     public static void joinGame(GameWindowController controller, NodeRole nodeRole) {
-        DecorateGame decorateGame = new DecorateGame(controller, network);
-        decorateGame.decorateJoinGameAs(nodeRole);
-        game = decorateGame.getGame();  //if doesn't work create updateGame method
+        GameDecorator gameDecorator = new GameDecorator(controller, network);
+        gameDecorator.decorateJoinGameAs(nodeRole);
+        gamePlay = gameDecorator.getGame();  //if doesn't work create updateGame method
     }
 
     public static Network getNetwork() {
@@ -31,13 +31,13 @@ public class Server {
 
     public static void start() {
         network = new Network();
-        receiverFactory = new ReceiverFactory(network, game);
+        receiverFactory = new ReceiverFactory(network, gamePlay);
         receiverFactory.start();
     }
 
     public static void stop() {
         receiverFactory.stop();
-        game.stop();
+        gamePlay.stop();                  //check this
         network.stop();
     }
 
@@ -47,5 +47,9 @@ public class Server {
 
     public static SenderMulticast getSenderMulticast() {
         return senderMulticast;
+    }
+
+    public static ReceiverFactory getReceiverFactory() {
+        return receiverFactory;
     }
 }

@@ -8,6 +8,6 @@ public class AckMessageHandler implements MessageHandler {
     public void handle(ReceiverFactory receiverFactory, GameMessage currentMessage) {
         //parse GameMessage here
         int mess_seq = 1; /* TEST */
-        receiverFactory.getGame().getConfirmSender().confirmMessage(mess_seq);
+        //receiverFactory.getGame().getConfirmSender().confirmMessage(mess_seq);
     }
 }

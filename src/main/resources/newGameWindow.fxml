@@ -9,7 +9,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #bbdefb;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphics.controllers.NewGameController">
    <children>
-      <Label layoutX="317.0" layoutY="109.0" text="New game" textFill="#273a4f">
+      <Label layoutX="317.0" layoutY="109.0" text="New gamePlay" textFill="#273a4f">
          <font>
             <Font name="Ravie" size="48.0" />
          </font>

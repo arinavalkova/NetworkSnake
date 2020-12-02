@@ -12,7 +12,6 @@ public class KeyController{
     }
 
     public void setKeyPressed(KeyCode key) {
-        System.out.println("Pressed: " + key);
         if (key == KeyCode.W) {
             supposedKey = Direction.UP;
         } else if (key == KeyCode.S) {

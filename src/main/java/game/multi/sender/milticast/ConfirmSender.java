@@ -1,6 +1,6 @@
 package game.multi.sender.milticast;
 
-import game.multi.Game;
+import game.multi.GamePlay;
 import game.multi.Network;
 
 import java.net.SocketAddress;
@@ -36,7 +36,7 @@ public class ConfirmSender {
         }
     });
 
-    public ConfirmSender(int ping_delay_ms, int node_timeout_ms, Network network, Game game) {
+    public ConfirmSender(int ping_delay_ms, int node_timeout_ms, Network network, GamePlay gamePlay) {
         this.network = network;
         this.ping_delay_ms = (long) ping_delay_ms;
         this.node_timeout_ms = (long) node_timeout_ms;
