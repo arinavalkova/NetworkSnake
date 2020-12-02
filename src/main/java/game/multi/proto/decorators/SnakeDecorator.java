@@ -204,22 +204,13 @@ public class SnakeDecorator {
             for (int j = yStart, count_j = 0; count_j < NEIGHBOUR_COUNT * NEIGHBOUR_COUNT + 1;
                  count_j++, j = ((j + 1) == fieldHeight ? 0 : (j + 1))
             ) {
-                if (!isCellEmpty(i, j)) {
+                GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
+                if (!gameStateDecorator.isCellEmpty(i, j)) {
                     return false;
                 }
             }
         }
         return true;
-    }
-
-    private boolean isCellEmpty(int i, int j) {
-        List<GameState.Coord> emptyCoords = new GameStateDecorator(gameState).getAllEmptyCoords();
-        for (GameState.Coord currentCoord : emptyCoords) {
-            if (currentCoord.getX() == i && currentCoord.getY() == j) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void deleteSnake(int playerId) {

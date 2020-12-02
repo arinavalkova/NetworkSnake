@@ -1,12 +1,13 @@
 package game.multi.proto.decorators;
 
 import dto.GameState;
+import main.Random;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateDecorator {
-    private final GameState gameState;
+    private GameState gameState;
 
     public GameStateDecorator(GameState gameState) {
         this.gameState = gameState;
@@ -34,10 +35,25 @@ public class GameStateDecorator {
         if (neededCount == 0) {
             return;
         }
-        List<GameState.Coord> allEmptyCoords = getAllEmptyCoords();
-        for (int i = 0; i < neededCount; i++) {
-
+        Random random = new Random();
+        List<GameState.Coord> emptyCoords = getAllEmptyCoords();
+        for(int i = 0; i < neededCount; i++) {
+            GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
+            gameState = GameState.newBuilder(gameState)
+                    .addFoods(randomCoord)
+                    .build();
+            emptyCoords.remove(randomCoord);
         }
+    }
+
+    public boolean isCellEmpty(int i, int j) {
+        List<GameState.Coord> emptyCoords = getAllEmptyCoords();
+        for (GameState.Coord currentCoord : emptyCoords) {
+            if (currentCoord.getX() == i && currentCoord.getY() == j) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<GameState.Coord> getAllFoodsCoords() {
@@ -75,5 +91,9 @@ public class GameStateDecorator {
             }
         }
         return allFieldCoordsList;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 }
