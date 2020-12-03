@@ -45,20 +45,21 @@ public class CurrentGames {
     }
 
     private String parseGameMessage(GameMessage gameMessage) {
-        GameState gameState = gameMessage.getState().getState();
-        String parsedMessage = gameState.getConfig().getWidth() +
+        GameMessage.AnnouncementMsg announcementMsg = gameMessage.getAnnouncement();
+        String parsedMessage = announcementMsg.getConfig().getWidth() +
                 X +
-                gameState.getConfig().getHeight() +
+                announcementMsg.getConfig().getHeight() +
                 SPACE +
-                gameState.getConfig().getFoodStatic() +
+                announcementMsg.getConfig().getFoodStatic() +
                 PLUS +
-                gameState.getConfig().getFoodPerPlayer() +
+                announcementMsg.getConfig().getFoodPerPlayer() +
                 X +
                 SPACE +
                 STATE_DELAY +
-                gameState.getConfig().getStateDelayMs() +
+                announcementMsg.getConfig().getStateDelayMs() +
+                SPACE +
                 PLAYERS;
-        List<GamePlayer> players = gameState.getPlayers().getPlayersList();
+        List<GamePlayer> players = gameMessage.getAnnouncement().getPlayers().getPlayersList();
         for (GamePlayer currentPlayer : players) {
             parsedMessage += currentPlayer.getName() + SPACE;
         }

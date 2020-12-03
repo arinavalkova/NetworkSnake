@@ -4,13 +4,17 @@ import dto.GameMessage;
 import dto.GameState;
 
 public class AnnouncmentMessageCreator {
-    private final GameMessage.AnnouncementMsg announcementMsg;
+    private final GameMessage announcementMsg;
 
     public AnnouncmentMessageCreator(Integer msg_seq, GameState gameState) {
-        this.announcementMsg = GameMessage.AnnouncementMsg.newBuilder()
-                .
+
+        GameMessage.AnnouncementMsg announcementMsg = GameMessage.AnnouncementMsg.newBuilder()
                 .setPlayers(gameState.getPlayers())
                 .setConfig(gameState.getConfig())
+                .build();
+        this.announcementMsg = GameMessage.newBuilder()
+                .setMsgSeq(msg_seq)
+                .setAnnouncement(announcementMsg)
                 .build();
     }
 

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class JoinWindowController {
 
-    private final static int GAMES_LIST_TIME_OUT = 1000;
+    private final static int GAMES_LIST_TIME_OUT = 5000;
 
     @FXML
     private JFXTextField nameField;
@@ -44,6 +44,7 @@ public class JoinWindowController {
     private void updateGamesList() {
         Thread updateGameListThread = new Thread(() -> {
             while (!Server.isStopped()) {
+                    System.out.println("printing");
                     Platform.runLater(() -> {
                         gamesListView.getItems().clear();
                         gamesListView.getItems().addAll(Server
@@ -52,7 +53,7 @@ public class JoinWindowController {
                                 .getCurrentGames()
                         );
                     });
-                    new TimeOut(GAMES_LIST_TIME_OUT);
+                    new TimeOut(GAMES_LIST_TIME_OUT).start();
             }
         });
         updateGameListThread.start();

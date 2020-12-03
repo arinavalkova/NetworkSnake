@@ -25,14 +25,9 @@ public class SenderMulticast {
 
     public void updateGameStateInvite(byte[] message) {
         this.message = message;
-        try {
-            System.out.println(GameMessage.parseFrom(this.message));
-        } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+        if (sendThread.getState() == Thread.State.NEW) {
+            sendThread.start();
         }
-//        if (sendThread.getState() == Thread.State.NEW) {
-//            sendThread.start();
-//        }
     }
 
     public void stop() {

@@ -1,5 +1,8 @@
 package game.multi;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import dto.GameMessage;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -46,9 +49,13 @@ public class Network {
             e.printStackTrace();
         }
 
+        byte[] answer = new byte[packetFromGroup.getLength()];
+        if (packetFromGroup.getLength() >= 0)
+            System.arraycopy(buffer, 0, answer, 0, packetFromGroup.getLength());
+
         Map<SocketAddress, byte[]> receivedMap = new ConcurrentHashMap<>();
-        receivedMap.put(packetFromGroup.getSocketAddress(),
-                ByteBuffer.allocate(BUFF_SIZE).put(buffer).flip().array());
+        receivedMap.put(packetFromGroup.getSocketAddress(), answer);
+
         return receivedMap;
     }
 

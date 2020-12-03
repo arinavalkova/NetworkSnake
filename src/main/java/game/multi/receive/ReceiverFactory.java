@@ -19,22 +19,17 @@ public class ReceiverFactory {
     private GamePlay gamePlay;
 
     private final CurrentGames currentGames;
-    private Map<SocketAddress, GameMessage> messagesBuffer;
     private final List<GameMessage> waitingForProcessingMessages;
 
-    private boolean isProcessorWork;
     private boolean isReceiverFromUnicastWork;
     private boolean isReceiverFromMulticastWork;
 
     private final Thread receiverFromUnicast = new Thread(() -> {
         while (isReceiverFromUnicastWork) {
             try {
-                messagesBuffer.put(
-                        null,
-                        GameMessage.parseFrom(
-                                network.receiveFromSocket()
-                        )
-                );
+                GameMessage gameMessage = GameMessage.parseFrom(network.receiveFromSocket());
+                MessageHandler messageHandler = messageHandlerMap.get(gameMessage.getTypeCase().getNumber());
+                messageHandler.handle(null, this, gameMessage);
             } catch (IOException e) {
                 break;
             }
@@ -50,28 +45,11 @@ public class ReceiverFactory {
             }
             try {
                 Map.Entry<SocketAddress, byte[]> messageEntry = receivedMessage.next();
-                System.out.println(messageEntry.getValue().length);
-                messagesBuffer.put(
-                        messageEntry.getKey(),
-                        GameMessage.parseFrom(
-                                messageEntry.getValue()
-                        )
-                );
+                   GameMessage gameMessage = GameMessage.parseFrom(messageEntry.getValue());
+                MessageHandler messageHandler = messageHandlerMap.get(gameMessage.getTypeCase().getNumber());
+                messageHandler.handle(messageEntry.getKey(), this,gameMessage);
             } catch (InvalidProtocolBufferException e) {
                 e.printStackTrace();
-            }
-        }
-    });
-
-    private final Thread processor = new Thread(() -> {
-        while (isProcessorWork) {
-            if (messagesBuffer.isEmpty()) {
-                continue;
-            }
-            for (Map.Entry<SocketAddress, GameMessage> messageEntry : messagesBuffer.entrySet()) {
-                MessageHandler messageHandler = messageHandlerMap.get(messageEntry.getValue()
-                        .getTypeCase().getNumber());
-                messageHandler.handle(messageEntry.getKey(), this, messageEntry.getValue());
             }
         }
     });
@@ -79,10 +57,8 @@ public class ReceiverFactory {
     public ReceiverFactory(Network network, GamePlay gamePlay) {
         this.network = network;
         this.gamePlay = gamePlay;
-        this.messagesBuffer = new ConcurrentHashMap<>();
         this.waitingForProcessingMessages = new CopyOnWriteArrayList<>();
         this.currentGames = new CurrentGames();
-        this.isProcessorWork = true;
         this.isReceiverFromUnicastWork = true;
         this.isReceiverFromMulticastWork = true;
     }
@@ -90,12 +66,10 @@ public class ReceiverFactory {
     public void start() {
         receiverFromUnicast.start();
         receiverFromMulticast.start();
-        processor.start();
     }
 
     public void stop() {
         //если я мастер отправить deputy очередь с необработанными сообщениями
-        this.isProcessorWork = false;
         this.isReceiverFromUnicastWork = false;
         this.isReceiverFromMulticastWork = false;
     }

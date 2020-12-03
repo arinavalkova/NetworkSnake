@@ -52,7 +52,7 @@ public class GamePlay implements ActionListener {
 //                network,
 //                this
 //        );
-        this.msg_seq = 0;
+        this.msg_seq = 1;
         //grab master info
         //установить тут NODE_ROLE
         this.nodeRole = NodeRole.MASTER;
