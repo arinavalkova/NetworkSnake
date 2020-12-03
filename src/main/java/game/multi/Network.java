@@ -2,6 +2,9 @@ package game.multi;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Network {
     private static final String MULTICAST_IP = "239.192.0.4";
@@ -34,7 +37,7 @@ public class Network {
         }
     }
 
-    public byte[] receiveFromMulticast() {
+    public Map<SocketAddress, byte[]> receiveFromMulticast() {
         byte[] buffer = new byte[BUFF_SIZE];
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
         try {
@@ -42,7 +45,11 @@ public class Network {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return buffer;
+
+        Map<SocketAddress, byte[]> receivedMap = new ConcurrentHashMap<>();
+        receivedMap.put(packetFromGroup.getSocketAddress(),
+                ByteBuffer.allocate(BUFF_SIZE).put(buffer).flip().array());
+        return receivedMap;
     }
 
     public void sendToSocket(byte[] bytes, SocketAddress socketAddress) {
@@ -55,14 +62,10 @@ public class Network {
         }
     }
 
-    public byte[] receiveFromSocket() {
+    public byte[] receiveFromSocket() throws IOException {
         byte[] buffer = new byte[BUFF_SIZE];
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
-        try {
-            unicastSocket.receive(packetFromGroup);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        unicastSocket.receive(packetFromGroup);
         return buffer;
     }
 

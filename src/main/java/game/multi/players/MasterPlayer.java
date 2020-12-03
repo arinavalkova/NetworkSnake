@@ -5,6 +5,7 @@ import dto.GameState;
 import dto.NodeRole;
 import game.multi.GamePlay;
 import game.multi.Server;
+import game.multi.proto.creators.AnnouncmentMessageCreator;
 import game.multi.proto.decorators.GameStateDecorator;
 import game.multi.proto.decorators.SnakeDecorator;
 
@@ -23,7 +24,6 @@ public class MasterPlayer implements Player {
             gamePlay.setNodeRole(NodeRole.VIEWER);
             return;
         }
-        //Server.getSenderMulticast().updateGameStateInvite("Hello");     /* Invite send thread updating */
         //получаем все сообщения steer message
         //получить свое направление с keyController
         //продвигаем зомби
@@ -36,6 +36,16 @@ public class MasterPlayer implements Player {
 
         //у нас в итоге все двигаются
         //нужна функцию куда предать мой айди, и steer сообщения и пусть вернется мапа с айди и координатой
+
+
+        Server.getSenderMulticast().updateGameStateInvite(
+                new AnnouncmentMessageCreator(
+                        gamePlay.getAndIncMsgSeq()
+                        , gamePlay.getGameState()
+                ).getBytes()
+        );     /* Invite send thread updating */
+
+
         Direction directionFromKeyController = gamePlay.getKeyController().getKey();
         SnakeDecorator snakeDecorator = new SnakeDecorator(gamePlay.getGameState());
         snakeDecorator.updateSnakeDirectionByPlayerId(gamePlay.getMy_id(), directionFromKeyController);
@@ -63,7 +73,7 @@ public class MasterPlayer implements Player {
         List<GameState.Coord> foodsCoords = gamePlay.getGameState().getFoodsList();
         //тут все неправильно с id и надо нормальные методы 
         for (GameState.Coord currentCoord : snakeCoords) {
-            if (currentCoord.getX() == moveMeCoord.getX() 
+            if (currentCoord.getX() == moveMeCoord.getX()
                     && currentCoord.getY() == moveMeCoord.getY()) {
                 return true;//тут нужны какие то изменения в proto змеи
             }

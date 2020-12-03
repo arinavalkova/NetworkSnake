@@ -1,14 +1,11 @@
 package graphics.drawers;
 
 import dto.GameState;
-import game.multi.field.Cell;
-import game.multi.field.CellRole;
 import game.multi.proto.decorators.GameStateDecorator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameFieldDrawer {
@@ -63,7 +60,7 @@ public class GameFieldDrawer {
         GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
         List<GameState.Coord> snakeCoords = gameStateDecorator.getAllSnakesCoords();
         for (GameState.Coord currentCoord : snakeCoords) {
-            drawCell(currentCoord, DrawerColor.getColor(CellRole.SNAKE));
+            drawCell(currentCoord, DrawerColor.SNAKE);
         }
     }
 
@@ -71,7 +68,7 @@ public class GameFieldDrawer {
         GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
         List<GameState.Coord> foodCoords = gameStateDecorator.getAllFoodsCoords();
         for (GameState.Coord currentCoord : foodCoords) {
-                drawCell(currentCoord, DrawerColor.getColor(CellRole.FOOD));
+                drawCell(currentCoord, DrawerColor.FOOD);
         }
     }
 

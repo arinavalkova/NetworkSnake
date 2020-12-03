@@ -80,10 +80,8 @@ public class GenerateStateMsg {
 //                .setState(state)
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
 
-        GameStateDecorator gameStateDecorator = new GameStateDecorator(state);
-        gameStateDecorator.generateFoodIfNecessary();
-        this.gameState = gameStateDecorator.getGameState();
-        System.out.println(this.gameState);
+        System.out.println(gameMessage.getTypeCase().getNumber());
+
     }
 
     private GameState.Coord coord(int x, int y) {

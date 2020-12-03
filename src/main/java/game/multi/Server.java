@@ -11,18 +11,19 @@ public class Server {
     private static Network network;
     private static ReceiverFactory receiverFactory;
     private static GamePlay gamePlay = null;
-    private final static SenderMulticast senderMulticast = new SenderMulticast(network);
+    private static SenderMulticast senderMulticast;
+    private static boolean isStopped;
 
     public static void startNewGame(GameWindowController controller) {
         GameDecorator gameDecorator = new GameDecorator(controller, network);
         gameDecorator.decorateNewGame();
-        gamePlay = gameDecorator.getGame();  //if doesn't work create updateGame method
+        Server.gamePlay = gameDecorator.getGame();
     }
 
     public static void joinGame(GameWindowController controller, NodeRole nodeRole) {
         GameDecorator gameDecorator = new GameDecorator(controller, network);
         gameDecorator.decorateJoinGameAs(nodeRole);
-        gamePlay = gameDecorator.getGame();  //if doesn't work create updateGame method
+        Server.gamePlay = gameDecorator.getGame();
     }
 
     public static Network getNetwork() {
@@ -30,19 +31,21 @@ public class Server {
     }
 
     public static void start() {
+        isStopped = false;
         network = new Network();
+        senderMulticast = new SenderMulticast(network);
         receiverFactory = new ReceiverFactory(network, gamePlay);
         receiverFactory.start();
     }
 
     public static void stop() {
+        isStopped = true;
+        senderMulticast.stop();
         receiverFactory.stop();
-        gamePlay.stop();                  //check this
+        if (gamePlay != null) {
+            gamePlay.stop();
+        }
         network.stop();
-    }
-
-    public static ArrayList<String> getListOfCurrentGames() { // <-- TO DO
-        return null;
     }
 
     public static SenderMulticast getSenderMulticast() {
@@ -51,5 +54,9 @@ public class Server {
 
     public static ReceiverFactory getReceiverFactory() {
         return receiverFactory;
+    }
+
+    public static boolean isStopped() {
+        return isStopped;
     }
 }

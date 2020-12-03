@@ -11,10 +11,13 @@ import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import main.TimeOut;
 
 import java.io.IOException;
 
 public class JoinWindowController {
+
+    private final static int GAMES_LIST_TIME_OUT = 1000;
 
     @FXML
     private JFXTextField nameField;
@@ -34,28 +37,26 @@ public class JoinWindowController {
 
     @FXML
     void initialize() {
-        //updateGamesList();
+        updateGamesList();
         addButtonsHandlers();
     }
 
-//    private void updateGamesList() {
-//        Thread updateGameListThread = new Thread(() -> {
-//            /* TO DO */
-//            while (true) {
-//                try {
-//                    Platform.runLater(() -> {
-//                        gamesListView.getItems().clear();
-//                        gamesListView.getItems().add(Server.getCurrentGames());
-//                    });
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            /*TO DO*/
-//        });
-//        updateGameListThread.start();
-//    }
+    private void updateGamesList() {
+        Thread updateGameListThread = new Thread(() -> {
+            while (!Server.isStopped()) {
+                    Platform.runLater(() -> {
+                        gamesListView.getItems().clear();
+                        gamesListView.getItems().addAll(Server
+                                .getReceiverFactory()
+                                .getCurrentGames()
+                                .getCurrentGames()
+                        );
+                    });
+                    new TimeOut(GAMES_LIST_TIME_OUT);
+            }
+        });
+        updateGameListThread.start();
+    }
 
     private void addButtonsHandlers() {
         addBackButtonHandler();
