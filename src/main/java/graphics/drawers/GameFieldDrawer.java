@@ -1,7 +1,9 @@
 package graphics.drawers;
 
 import dto.GameState;
-import game.multi.proto.decorators.GameStateDecorator;
+import game.multi.GamePlay;
+import game.multi.proto.renovators.GameStateRenovator;
+import game.multi.proto.viewers.GameStateViewer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -21,7 +23,8 @@ public class GameFieldDrawer {
     private final GraphicsContext field;
     private final int cellSize;
 
-    public GameFieldDrawer(GraphicsContext field, GameState gameState) {
+    public GameFieldDrawer(GraphicsContext field, GamePlay gamePlay) {
+        GameState gameState = gamePlay.getGameState();
         this.field = field;
         this.cellSize = gameState.getConfig().getHeight() > gameState.getConfig().getWidth() ?
                 FIELD_HEIGHT / gameState.getConfig().getHeight()
@@ -49,24 +52,22 @@ public class GameFieldDrawer {
                 cellSize, cellSize);
     }
 
-    public void redrawField(GameState gameState) {
-        clear(gameState);
-        drawField(gameState);//либо всегда новый объект создавать
-        drawFood(gameState);
-        drawSnakes(gameState);
+    public void redrawField(GamePlay gamePlay) {
+        clear(gamePlay.getGameState());
+        drawField(gamePlay.getGameState());//либо всегда новый объект создавать
+        drawFood(gamePlay);
+        drawSnakes(gamePlay);
     }
 
-    private void drawSnakes(GameState gameState) {
-        GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
-        List<GameState.Coord> snakeCoords = gameStateDecorator.getAllSnakesCoords();
+    private void drawSnakes(GamePlay gamePlay) {
+        List<GameState.Coord> snakeCoords = new GameStateViewer(gamePlay.getGameState()).getAllSnakesCoords();
         for (GameState.Coord currentCoord : snakeCoords) {
             drawCell(currentCoord, DrawerColor.SNAKE);
         }
     }
 
-    private void drawFood(GameState gameState) {
-        GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
-        List<GameState.Coord> foodCoords = gameStateDecorator.getAllFoodsCoords();
+    private void drawFood(GamePlay gamePlay) {
+        List<GameState.Coord> foodCoords = new GameStateViewer(gamePlay.getGameState()).getAllFoodsCoords();
         for (GameState.Coord currentCoord : foodCoords) {
                 drawCell(currentCoord, DrawerColor.FOOD);
         }
@@ -74,6 +75,7 @@ public class GameFieldDrawer {
 
     public void drawEndOfGame(GameState gameState) {
         field.setFill(Paint.valueOf(END_OF_GAME_COLOR));
+        clear(gameState);
         clear(gameState);
         field.setFont(new Font(FONT_SIZE));
         field.fillText(END_OF_GAME, X_COORD_TEXT, Y_COORD_TEXT);

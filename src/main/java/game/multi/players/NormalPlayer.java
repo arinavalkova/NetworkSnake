@@ -3,6 +3,9 @@ package game.multi.players;
 import dto.Direction;
 import dto.NodeRole;
 import game.multi.GamePlay;
+import game.multi.Server;
+import game.multi.proto.creators.SteerMessageCreator;
+import game.multi.proto.viewers.GamePlayersViewer;
 
 public class NormalPlayer implements Player {
     @Override
@@ -13,7 +16,14 @@ public class NormalPlayer implements Player {
             return;
         }
         Direction moveDirection = gamePlay.getKeyController().getKey();
-        //send to MASTER this move direction
-        //game.getGameWindowController().setPoints(points);
+        Server.getNetwork().sendToSocket(
+                new SteerMessageCreator(
+                        gamePlay.getAndIncMsgSeq(),
+                        gamePlay.getMy_id(),
+                        moveDirection
+                ).getBytes(),
+                new GamePlayersViewer(gamePlay.getGameState())
+                        .getMasterAddress()
+        );
     }
 }

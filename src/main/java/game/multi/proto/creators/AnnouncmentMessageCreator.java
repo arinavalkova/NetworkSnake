@@ -7,7 +7,6 @@ public class AnnouncmentMessageCreator {
     private final GameMessage announcementMsg;
 
     public AnnouncmentMessageCreator(Integer msg_seq, GameState gameState) {
-
         GameMessage.AnnouncementMsg announcementMsg = GameMessage.AnnouncementMsg.newBuilder()
                 .setPlayers(gameState.getPlayers())
                 .setConfig(gameState.getConfig())

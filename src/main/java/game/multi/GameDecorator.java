@@ -1,7 +1,8 @@
 package game.multi;
 
 import dto.*;
-import game.multi.proto.decorators.GameStateDecorator;
+import game.multi.proto.renovators.GameStateRenovator;
+import game.multi.proto.viewers.GameStateViewer;
 import graphics.controllers.GameWindowController;
 import graphics.data.JoinGameWindowData;
 import graphics.data.NewGameWindowData;
@@ -41,14 +42,16 @@ public class GameDecorator {
         GamePlayers gamePlayers = GamePlayers.newBuilder()
                 .addPlayers(createNewGamePlayer())
                 .build();
-        GameState.Builder gameStateBuilder = GameState.newBuilder()
+        GameState gameState = GameState.newBuilder()
                 .setStateOrder(NEW_GAME_STATE_NUM)
                 .setPlayers(gamePlayers)
-                .setConfig(createNewGameConfig());
-        GameStateDecorator gameStateDecorator = new GameStateDecorator(gameStateBuilder.build());
-        gameStateDecorator.addSnake(NEW_PLAYER_ID);
-        gameStateDecorator.generateFoodIfNecessary();
-        return gameStateDecorator.getGameState();
+                .setConfig(createNewGameConfig())
+                .build();
+
+        GameStateViewer gameStateViewer = new GameStateViewer(gameState);
+        gameStateViewer.addSnake(NEW_PLAYER_ID);
+        gameStateViewer.generateFoodIfNecessary();
+        return gameStateViewer.getGameState();
     }
 
     public void decorateJoinGameAs(NodeRole nodeRole) {

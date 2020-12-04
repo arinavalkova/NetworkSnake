@@ -3,8 +3,6 @@ package main;
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
 import dto.GameState;
-import game.multi.proto.decorators.GameStateDecorator;
-import game.multi.proto.decorators.SnakeDecorator;
 
 public class GenerateStateMsg {
 
@@ -43,8 +41,8 @@ public class GenerateStateMsg {
                 .addSnakes(snake)
                 .setPlayers(players)
                 .setConfig(config)
-                //.addFoods(coord(7, 6))
-                //.addFoods(coord(8, 7))
+                .addFoods(coord(7, 6))
+                .addFoods(coord(8, 7))
                 .build();
         GameMessage.StateMsg stateMsg = GameMessage.StateMsg.newBuilder()
                 .setState(state)
@@ -79,9 +77,9 @@ public class GenerateStateMsg {
 //        this.gameMessage = GameMessage.newBuilder(this.gameMessage)
 //                .setState(state)
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
-
-        System.out.println(gameMessage.getTypeCase().getNumber());
-
+//        GamePlayerDecorator gamePlayerDecorator = new GamePlayerDecorator(gameState);
+//        gamePlayerDecorator.incPoints(1);
+//        System.out.println(this.gameState);
     }
 
     private GameState.Coord coord(int x, int y) {

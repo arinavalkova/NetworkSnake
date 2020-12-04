@@ -7,6 +7,7 @@ import game.multi.Network;
 import game.multi.receive.handlers.*;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.List;
@@ -38,18 +39,18 @@ public class ReceiverFactory {
 
     private final Thread receiverFromMulticast = new Thread(() -> {
         while (isReceiverFromMulticastWork) {
-            Iterator<Map.Entry<SocketAddress, byte[]>> receivedMessage =
-                    network.receiveFromMulticast().entrySet().iterator();
-            if (!receivedMessage.hasNext()) {
-                continue;
-            }
             try {
+                Iterator<Map.Entry<SocketAddress, byte[]>> receivedMessage =
+                        network.receiveFromMulticast().entrySet().iterator();
+                if (!receivedMessage.hasNext()) {
+                    continue;
+                }
                 Map.Entry<SocketAddress, byte[]> messageEntry = receivedMessage.next();
-                   GameMessage gameMessage = GameMessage.parseFrom(messageEntry.getValue());
+                GameMessage gameMessage = GameMessage.parseFrom(messageEntry.getValue());
                 MessageHandler messageHandler = messageHandlerMap.get(gameMessage.getTypeCase().getNumber());
-                messageHandler.handle(messageEntry.getKey(), this,gameMessage);
-            } catch (InvalidProtocolBufferException e) {
-                e.printStackTrace();
+                messageHandler.handle(messageEntry.getKey(), this, gameMessage);
+            } catch (IOException e) {
+                break;
             }
         }
     });

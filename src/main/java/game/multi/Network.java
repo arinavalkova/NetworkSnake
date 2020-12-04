@@ -6,6 +6,7 @@ import dto.GameMessage;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,14 +41,10 @@ public class Network {
         }
     }
 
-    public Map<SocketAddress, byte[]> receiveFromMulticast() {
+    public Map<SocketAddress, byte[]> receiveFromMulticast() throws IOException {
         byte[] buffer = new byte[BUFF_SIZE];
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
-        try {
-            multicastSocket.receive(packetFromGroup);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        multicastSocket.receive(packetFromGroup);
 
         byte[] answer = new byte[packetFromGroup.getLength()];
         if (packetFromGroup.getLength() >= 0)
@@ -79,6 +76,12 @@ public class Network {
     public void stop() {
         unicastSocket.close();
         multicastSocket.close();
+    }
+
+    public void sendToListOfAddresses(List<InetSocketAddress> addresses, byte[] message) {
+        for (InetSocketAddress currentAddress : addresses) {
+            sendToSocket(message, currentAddress);
+        }
     }
 
     public int getUnicastSocketPort() {

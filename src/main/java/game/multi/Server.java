@@ -1,5 +1,6 @@
 package game.multi;
 
+import dto.GameState;
 import dto.NodeRole;
 import game.multi.receive.ReceiverFactory;
 import game.multi.sender.milticast.SenderMulticast;
@@ -11,7 +12,6 @@ public class Server {
     private static Network network;
     private static ReceiverFactory receiverFactory;
     private static GamePlay gamePlay = null;
-    private static SenderMulticast senderMulticast;
     private static boolean isStopped;
 
     public static void startNewGame(GameWindowController controller) {
@@ -33,14 +33,12 @@ public class Server {
     public static void start() {
         isStopped = false;
         network = new Network();
-        senderMulticast = new SenderMulticast(network);
         receiverFactory = new ReceiverFactory(network, gamePlay);
         receiverFactory.start();
     }
 
     public static void stop() {
         isStopped = true;
-        senderMulticast.stop();
         receiverFactory.stop();
         if (gamePlay != null) {
             gamePlay.stop();
@@ -48,8 +46,8 @@ public class Server {
         network.stop();
     }
 
-    public static SenderMulticast getSenderMulticast() {
-        return senderMulticast;
+    public static void stopGamePlay() {
+        gamePlay.stop();
     }
 
     public static ReceiverFactory getReceiverFactory() {
@@ -58,5 +56,13 @@ public class Server {
 
     public static boolean isStopped() {
         return isStopped;
+    }
+
+    public static GamePlay getGamePlay() {
+        return gamePlay;
+    }
+
+    public static void deleteFromCurrentGames(GameState gameState) {
+        receiverFactory.getCurrentGames().deleteGame(gameState);
     }
 }

@@ -1,24 +1,21 @@
-package game.multi.proto.decorators;
+package game.multi.proto.viewers;
 
 import dto.Direction;
 import dto.GameState;
+import game.multi.proto.renovators.GameStateRenovator;
+import game.multi.proto.renovators.SnakeRenovator;
 import main.Random;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameStateDecorator {
+public class GameStateViewer {
     private final static int NEIGHBOUR_COUNT = 2;
     private GameState gameState;
 
-    public GameStateDecorator(GameState gameState) {
+    public GameStateViewer(GameState gameState) {
         this.gameState = gameState;
     }
-
-    //получение мапы клеток еды и player_id
-
-    //получение списка клеток змеек и player_id
-
 
     public int getAliveSnakesCount() {
         int count = 0;
@@ -31,43 +28,16 @@ public class GameStateDecorator {
         return count;
     }
 
-    public void generateFoodIfNecessary() {
-        int neededCount = (int) (gameState.getConfig().getFoodStatic() +
-                gameState.getConfig().getFoodPerPlayer() * getAliveSnakesCount()) - gameState.getFoodsCount();
-        if (neededCount == 0) {
-            return;
-        }
-        Random random = new Random();
-        List<GameState.Coord> emptyCoords = getAllEmptyCoords();
-        for(int i = 0; i < neededCount; i++) {
-            GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
-            gameState = GameState.newBuilder(gameState)
-                    .addFoods(randomCoord)
-                    .build();
-            emptyCoords.remove(randomCoord);
-        }
-    }
-
-    public boolean isCellEmpty(int i, int j) {
-        List<GameState.Coord> emptyCoords = getAllEmptyCoords();
-        for (GameState.Coord currentCoord : emptyCoords) {
-            if (currentCoord.getX() == i && currentCoord.getY() == j) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<GameState.Coord> getAllFoodsCoords() {
-        return gameState.getFoodsList();
-    }
-
     public List<GameState.Coord> getAllSnakesCoords() {
         List<GameState.Coord> allSnakesCoords = new ArrayList<>();
         for (int i = 0; i < gameState.getSnakesCount(); i++) {
             allSnakesCoords.addAll(gameState.getSnakes(i).getPointsList());
         }
         return allSnakesCoords;
+    }
+
+    public List<GameState.Coord> getAllFoodsCoords() {
+        return gameState.getFoodsList();
     }
 
     public List<GameState.Coord> getAllEmptyCoords() {
@@ -95,14 +65,26 @@ public class GameStateDecorator {
         return allFieldCoordsList;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public List<GameState.Coord> findCoordsForNewSnake() {
+        List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
+        List<GameState.Coord> answerList = new ArrayList<>();
+        while (!emptyCoords.isEmpty()) {
+            GameState.Coord currentCoord = emptyCoords.get(new Random().inBounds(0, emptyCoords.size() - 1));
+            emptyCoords.remove(currentCoord);
+            if (isCellNeighborhoodEmpty(currentCoord)) {
+                answerList.add(currentCoord);
+                answerList.add(new SnakeViewer(gameState).checkOutOfBoundary(currentCoord.getX() + 1,
+                        currentCoord.getY(), gameState));
+                break;
+            }
+        }
+        return answerList;
     }
 
-    public boolean addSnake(int playerId) {
+    public void addSnake(int playerId) {
         List<GameState.Coord> startCoords = findCoordsForNewSnake();
-        if (startCoords.isEmpty())
-            return false;
+//        if (startCoords.isEmpty())
+//            return null;
         GameState.Snake newSnake = GameState.Snake.newBuilder()
                 .setHeadDirection(Direction.UP)
                 .setState(GameState.Snake.SnakeState.ALIVE)
@@ -112,23 +94,6 @@ public class GameStateDecorator {
         gameState = GameState.newBuilder(gameState)
                 .addSnakes(newSnake)
                 .build();
-        return true;
-    }
-
-    private List<GameState.Coord> findCoordsForNewSnake() {
-        SnakeDecorator snakeDecorator = new SnakeDecorator(gameState);
-        List<GameState.Coord> emptyCoords = new GameStateDecorator(gameState).getAllEmptyCoords();
-        List<GameState.Coord> answerList = new ArrayList<>();
-        while (!emptyCoords.isEmpty()) {
-            GameState.Coord currentCoord = emptyCoords.get(new Random().inBounds(0, emptyCoords.size() - 1));
-            emptyCoords.remove(currentCoord);
-            if (isCellNeighborhoodEmpty(currentCoord)) {
-                answerList.add(currentCoord);
-                answerList.add(snakeDecorator.checkOutOfBoundary(currentCoord.getX() + 1, currentCoord.getY()));
-                break;
-            }
-        }
-        return answerList;
     }
 
     private boolean isCellNeighborhoodEmpty(GameState.Coord currentCoord) {
@@ -152,8 +117,7 @@ public class GameStateDecorator {
             for (int j = yStart, count_j = 0; count_j < NEIGHBOUR_COUNT * NEIGHBOUR_COUNT + 1;
                  count_j++, j = ((j + 1) == fieldHeight ? 0 : (j + 1))
             ) {
-                GameStateDecorator gameStateDecorator = new GameStateDecorator(gameState);
-                if (!gameStateDecorator.isCellEmpty(i, j)) {
+                if (!isCellEmpty(i, j)) {
                     return false;
                 }
             }
@@ -161,4 +125,35 @@ public class GameStateDecorator {
         return true;
     }
 
+    public boolean isCellEmpty(int i, int j) {
+        List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
+        for (GameState.Coord currentCoord : emptyCoords) {
+            if (currentCoord.getX() == i && currentCoord.getY() == j) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void generateFoodIfNecessary() {
+        int neededCount = (int) (gameState.getConfig().getFoodStatic() +
+                gameState.getConfig().getFoodPerPlayer() *
+                        new GameStateViewer(gameState).getAliveSnakesCount()) - gameState.getFoodsCount();
+        if (neededCount == 0) {
+            return;
+        }
+        Random random = new Random();
+        List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
+        for(int i = 0; i < neededCount; i++) {
+            GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
+            gameState = GameState.newBuilder(gameState)
+                    .addFoods(randomCoord)
+                    .build();
+            emptyCoords.remove(randomCoord);
+        }
+    }
 }

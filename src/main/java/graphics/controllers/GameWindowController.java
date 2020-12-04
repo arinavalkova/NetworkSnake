@@ -4,8 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import dto.GamePlayer;
 import dto.NodeRole;
-import game.multi.proto.decorators.GamePlayerDecorator;
-import graphics.data.NewGameWindowData;
+import game.multi.Server;
+import game.multi.proto.renovators.GamePlayerRenovator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -16,6 +16,7 @@ import graphics.loaders.SceneController;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameWindowController {
 
@@ -65,6 +66,13 @@ public class GameWindowController {
         });
     }
 
+    public void setPlayersList(List<String> playersList) {
+        Platform.runLater(() -> {
+            playersListView.getItems().clear();
+            playersListView.getItems().addAll(playersList);
+        });
+    }
+
     public void setFieldSize(int width, int height) {
         Platform.runLater(() ->fieldSizeField.setText(width + " X " + height));
     }
@@ -72,6 +80,7 @@ public class GameWindowController {
     private void addBackButtonHandler() {
         backToMenuButton.setOnAction(e -> {
             try {
+                Server.stopGamePlay();
                 SceneController.load(WindowNames.START_WINDOW);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -95,9 +104,9 @@ public class GameWindowController {
         foodField.setText(food_static + PLUS + food_per_player + X);
     }
 
-    public void updatePlayersList(ArrayList<GamePlayerDecorator> gamePlayerArrayList) {
+    public void updatePlayersList(ArrayList<GamePlayerRenovator> gamePlayerArrayList) {
         playersListView.getItems().clear();
-        for (GamePlayerDecorator currentGamePlayer : gamePlayerArrayList) {
+        for (GamePlayerRenovator currentGamePlayer : gamePlayerArrayList) {
             playersListView.getItems().add(currentGamePlayer.toString());
         }
     }

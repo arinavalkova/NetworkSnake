@@ -1,9 +1,8 @@
 package game.multi.receive;
 
-import dto.GameMessage;
-import dto.GamePlayer;
-import dto.GameState;
+import dto.*;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +10,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CurrentGames {
+    private final static int GAME_ANNOUNCE_TIME_OUT = 2000;
     private final static String PLAYERS = "Players: ";
     private final static String STATE_DELAY = "State delay: ";
     private final static String PLUS = "+";
     private final static String X = "X";
     private final static String SPACE = " ";
     private final static String NO_GAMES_FOR_JOIN = "No games for join";
-    private final Map<SocketAddress, GameMessage> currentGamesMap;
+    private final Map<String, SocketAddress> currentGamesMap;
 
     public CurrentGames() {
         currentGamesMap = new ConcurrentHashMap<>();
@@ -25,9 +25,22 @@ public class CurrentGames {
 
     public void update(SocketAddress socketAddress, GameMessage gameMessage) {
         synchronized (currentGamesMap) {
-            currentGamesMap.remove(socketAddress);
-            currentGamesMap.put(socketAddress, gameMessage);
+            String currentGame = findStringBySocketAddress(socketAddress);
+            if (currentGame != null) {
+                currentGamesMap.remove(currentGame);
+            }
+            currentGamesMap.put(parseGameMessage(gameMessage), socketAddress);
         }
+    }
+
+    public String findStringBySocketAddress(SocketAddress socketAddress) {
+        synchronized (currentGamesMap) {
+            for (Map.Entry<String, SocketAddress> entry : currentGamesMap.entrySet()) {
+                if (entry.getValue().equals(socketAddress))
+                    return entry.getKey();
+            }
+        }
+        return null;
     }
 
     public ArrayList<String> getCurrentGames() {
@@ -36,8 +49,8 @@ public class CurrentGames {
             if (currentGamesMap.isEmpty()) {
                 currentGames.add(NO_GAMES_FOR_JOIN);
             } else {
-                for (Map.Entry<SocketAddress, GameMessage> entry : currentGamesMap.entrySet()) {
-                    currentGames.add(parseGameMessage(entry.getValue()));
+                for (Map.Entry<String, SocketAddress> entry : currentGamesMap.entrySet()) {
+                    currentGames.add(entry.getKey());
                 }
             }
         }
@@ -46,23 +59,33 @@ public class CurrentGames {
 
     private String parseGameMessage(GameMessage gameMessage) {
         GameMessage.AnnouncementMsg announcementMsg = gameMessage.getAnnouncement();
-        String parsedMessage = announcementMsg.getConfig().getWidth() +
+        return parseGame(announcementMsg.getConfig(), announcementMsg.getPlayers());
+    }
+
+    private String parseGame(GameConfig gameConfig, GamePlayers gamePlayers) {
+        String parsedMessage = gameConfig.getWidth() +
                 X +
-                announcementMsg.getConfig().getHeight() +
+                gameConfig.getHeight() +
                 SPACE +
-                announcementMsg.getConfig().getFoodStatic() +
+                gameConfig.getFoodStatic() +
                 PLUS +
-                announcementMsg.getConfig().getFoodPerPlayer() +
+                gameConfig.getFoodPerPlayer() +
                 X +
                 SPACE +
                 STATE_DELAY +
-                announcementMsg.getConfig().getStateDelayMs() +
+                gameConfig.getStateDelayMs() +
                 SPACE +
                 PLAYERS;
-        List<GamePlayer> players = gameMessage.getAnnouncement().getPlayers().getPlayersList();
+        List<GamePlayer> players = gamePlayers.getPlayersList();
         for (GamePlayer currentPlayer : players) {
             parsedMessage += currentPlayer.getName() + SPACE;
         }
         return parsedMessage;
+    }
+
+    public void deleteGame(GameState gameState) {
+        synchronized (currentGamesMap) {
+            currentGamesMap.remove(parseGame(gameState.getConfig(), gameState.getPlayers()));
+        }
     }
 }

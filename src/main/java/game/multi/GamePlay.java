@@ -3,9 +3,12 @@ package game.multi;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
+import game.multi.proto.viewers.GamePlayersViewer;
+import game.multi.sender.milticast.SenderMulticast;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.KeyController;
 import graphics.drawers.GameFieldDrawer;
+import main.TimeOut;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +17,8 @@ import java.net.SocketAddress;
 import java.util.Map;
 
 public class GamePlay implements ActionListener {
-    private final GameWindowController gameWindowController;
+    private final Integer GAME_INFO_DRAWER_TIME_OUT = 5000;
+    private GameWindowController gameWindowController;
     private final GameFieldDrawer gameFieldDrawer;
     private final Timer mainTimer;
     private final KeyController keyController;
@@ -25,24 +29,28 @@ public class GamePlay implements ActionListener {
     private NodeRole nodeRole;
 
     private int msg_seq;
+    private final Object msq_seq_mutex;
     private int issued_id;
 
     private int my_id;
     private int master_id;
     private int deputy_id;
 
+    private boolean gameInfoDrawerWork = true;
+    private SenderMulticast senderMulticast;
     private boolean gameOver = false;
 
     public GamePlay(KeyController keyController
             , GameWindowController gameWindowController
             , GameState gameState, int id) {
+        this.senderMulticast = new SenderMulticast(Server.getNetwork());
         this.my_id = id;
         this.issued_id = 0;
         this.gameState = gameState;
         this.gameWindowController = gameWindowController;
         this.gameFieldDrawer = new GameFieldDrawer(
                 gameWindowController.getCanvas().getGraphicsContext2D(),
-                gameState
+                this
         );
         this.mainTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
         this.keyController = keyController;
@@ -56,9 +64,18 @@ public class GamePlay implements ActionListener {
         //grab master info
         //установить тут NODE_ROLE
         this.nodeRole = NodeRole.MASTER;
+        msq_seq_mutex = new Object();
     }
 
+    private final Thread gameInfoDrawerThread = new Thread(() -> {
+        while (gameInfoDrawerWork) {
+            gameWindowController.setPlayersList(new GamePlayersViewer(gameState).getPlayersListToDraw());
+            new TimeOut(GAME_INFO_DRAWER_TIME_OUT).start();
+        }
+    });
+
     public void start() {
+        gameInfoDrawerThread.start();
         gameFieldDrawer.drawField(gameState);
         mainTimer.start();
     }
@@ -69,10 +86,13 @@ public class GamePlay implements ActionListener {
             stop();
         }
         playersMap.get(nodeRole).play(this);
-        getGameFieldDrawer().redrawField(gameState);
+        getGameFieldDrawer().redrawField(this);
     }
 
     public void stop() {
+        Server.deleteFromCurrentGames(gameState);
+        senderMulticast.stop();
+        gameInfoDrawerWork = false;
         gameFieldDrawer.drawEndOfGame(gameState);
         mainTimer.stop();
         //maybe something else for end of game
@@ -119,7 +139,10 @@ public class GamePlay implements ActionListener {
 //    }
 
     public int getAndIncMsgSeq() {
-        return msg_seq++;
+        synchronized (msq_seq_mutex) {
+            msg_seq++;
+        }
+        return msg_seq;
     }
 
     public int getAndIncIssuedId() {
@@ -147,6 +170,12 @@ public class GamePlay implements ActionListener {
     }
 
     public void updateGameState(GameState gameState) {
-        this.gameState = gameState;
+        synchronized (this.gameState) {
+            this.gameState = gameState;
+        }
+    }
+
+    public  SenderMulticast getSenderMulticast() {
+        return senderMulticast;
     }
 }
