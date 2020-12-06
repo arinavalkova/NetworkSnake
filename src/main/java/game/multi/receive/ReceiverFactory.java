@@ -1,10 +1,10 @@
 package game.multi.receive;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import dto.GameMessage;
 import game.multi.GamePlay;
 import game.multi.Network;
 import game.multi.receive.handlers.*;
+import game.multi.sender.milticast.ByteMessage;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +12,6 @@ import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ReceiverFactory {
@@ -28,9 +27,10 @@ public class ReceiverFactory {
     private final Thread receiverFromUnicast = new Thread(() -> {
         while (isReceiverFromUnicastWork) {
             try {
-                GameMessage gameMessage = GameMessage.parseFrom(network.receiveFromSocket());
+                ByteMessage receivedMessage = network.receiveFromSocket();
+                GameMessage gameMessage = GameMessage.parseFrom(receivedMessage.getMessage());
                 MessageHandler messageHandler = messageHandlerMap.get(gameMessage.getTypeCase().getNumber());
-                messageHandler.handle(null, this, gameMessage);
+                messageHandler.handle(receivedMessage.getSocketAddress(), this, gameMessage);
             } catch (IOException e) {
                 break;
             }
@@ -40,15 +40,10 @@ public class ReceiverFactory {
     private final Thread receiverFromMulticast = new Thread(() -> {
         while (isReceiverFromMulticastWork) {
             try {
-                Iterator<Map.Entry<SocketAddress, byte[]>> receivedMessage =
-                        network.receiveFromMulticast().entrySet().iterator();
-                if (!receivedMessage.hasNext()) {
-                    continue;
-                }
-                Map.Entry<SocketAddress, byte[]> messageEntry = receivedMessage.next();
-                GameMessage gameMessage = GameMessage.parseFrom(messageEntry.getValue());
+                ByteMessage receivedMessage = network.receiveFromMulticast();
+                GameMessage gameMessage = GameMessage.parseFrom(receivedMessage.getMessage());
                 MessageHandler messageHandler = messageHandlerMap.get(gameMessage.getTypeCase().getNumber());
-                messageHandler.handle(messageEntry.getKey(), this, gameMessage);
+                messageHandler.handle(receivedMessage.getSocketAddress(), this, gameMessage);
             } catch (IOException e) {
                 break;
             }
@@ -65,7 +60,6 @@ public class ReceiverFactory {
     }
 
     public void start() {
-        receiverFromUnicast.start();
         receiverFromMulticast.start();
     }
 
@@ -96,5 +90,9 @@ public class ReceiverFactory {
 
     public List<GameMessage> getWaitingForProcessingMessages() {
         return waitingForProcessingMessages;
+    }
+
+    public void setGamePlay(GamePlay gamePlay) {
+        this.gamePlay = gamePlay;
     }
 }

@@ -2,10 +2,14 @@ package game.multi.proto.renovators;
 
 import dto.Direction;
 import dto.GameState;
+import dto.NodeRole;
+import dto.PlayerType;
 import game.multi.GamePlay;
 import game.multi.proto.viewers.GameStateViewer;
 import main.Random;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class GameStateRenovator {
         }
         Random random = new Random();
         List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
-        for(int i = 0; i < neededCount; i++) {
+        for (int i = 0; i < neededCount; i++) {
             GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
             gameState = GameState.newBuilder(gameState)
                     .addFoods(randomCoord)
@@ -70,5 +74,21 @@ public class GameStateRenovator {
                 .addAllFoods(newCoords)
                 .build();
         gamePlay.updateGameState(gameState);
+    }
+
+    public Integer tryAddNewPlayer(String name, InetSocketAddress socketAddress, NodeRole nodeRole) {
+        int playerId = gamePlay.getAndIncIssuedId();//////////////it is tooo bad
+        if (!addSnake(playerId)) {
+            return null;
+        }
+        GamePlayersRenovator gamePlayersRenovator = new GamePlayersRenovator(gamePlay);
+        gamePlayersRenovator.addPlayer(name
+                , playerId
+                , socketAddress.getAddress().getHostAddress()
+                , socketAddress.getPort()
+                , nodeRole
+                , PlayerType.HUMAN
+                , 0);
+        return playerId;
     }
 }

@@ -1,12 +1,11 @@
 package game.multi.proto.viewers;
 
-import dto.GamePlayer;
-import dto.GameState;
+import dto.*;
 
 import java.util.List;
 
 public class GamePlayerViewer {
-    private final GameState gameState;
+    private GameState gameState;
 
     public GamePlayerViewer(GameState gameState) {
         this.gameState = gameState;

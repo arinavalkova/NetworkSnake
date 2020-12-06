@@ -3,6 +3,8 @@ package main;
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.*;
 import dto.GameState;
+import game.multi.proto.renovators.GamePlayersRenovator;
+import game.multi.proto.viewers.GamePlayersViewer;
 
 public class GenerateStateMsg {
 
@@ -79,6 +81,19 @@ public class GenerateStateMsg {
 //        System.out.println(this.gameMessage.getState().getState().getSnakes(0).getPointsList());
 //        GamePlayerDecorator gamePlayerDecorator = new GamePlayerDecorator(gameState);
 //        gamePlayerDecorator.incPoints(1);
+//        System.out.println(this.gameState);
+
+//        GamePlayersViewer gamePlayersViewer = new GamePlayersViewer(state);
+//        gamePlayersViewer.addPlayer(
+//                "Arina",
+//                1,
+//                "127.0.0.1",
+//                5555,
+//                NodeRole.NORMAL,
+//                PlayerType.HUMAN,
+//                0
+//        );
+//        this.gameState = gamePlayersViewer.getGameState();
 //        System.out.println(this.gameState);
     }
 

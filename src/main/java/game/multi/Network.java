@@ -2,6 +2,7 @@ package game.multi;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import dto.GameMessage;
+import game.multi.sender.milticast.ByteMessage;
 
 import java.io.IOException;
 import java.net.*;
@@ -41,7 +42,7 @@ public class Network {
         }
     }
 
-    public Map<SocketAddress, byte[]> receiveFromMulticast() throws IOException {
+    public ByteMessage receiveFromMulticast() throws IOException {
         byte[] buffer = new byte[BUFF_SIZE];
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
         multicastSocket.receive(packetFromGroup);
@@ -50,10 +51,9 @@ public class Network {
         if (packetFromGroup.getLength() >= 0)
             System.arraycopy(buffer, 0, answer, 0, packetFromGroup.getLength());
 
-        Map<SocketAddress, byte[]> receivedMap = new ConcurrentHashMap<>();
-        receivedMap.put(packetFromGroup.getSocketAddress(), answer);
-
-        return receivedMap;
+        InetSocketAddress inetSocketAddress =
+                new InetSocketAddress(packetFromGroup.getAddress(), packetFromGroup.getPort());
+        return new ByteMessage(inetSocketAddress, answer);
     }
 
     public void sendToSocket(byte[] bytes, SocketAddress socketAddress) {
@@ -66,11 +66,18 @@ public class Network {
         }
     }
 
-    public byte[] receiveFromSocket() throws IOException {
+    public ByteMessage receiveFromSocket() throws IOException {
         byte[] buffer = new byte[BUFF_SIZE];
         DatagramPacket packetFromGroup = new DatagramPacket(buffer, buffer.length);
         unicastSocket.receive(packetFromGroup);
-        return buffer;
+
+        byte[] answer = new byte[packetFromGroup.getLength()];
+        if (packetFromGroup.getLength() >= 0)
+            System.arraycopy(buffer, 0, answer, 0, packetFromGroup.getLength());
+
+        InetSocketAddress inetSocketAddress =
+                new InetSocketAddress(packetFromGroup.getAddress(), packetFromGroup.getPort());
+        return new ByteMessage(inetSocketAddress, answer);
     }
 
     public void stop() {

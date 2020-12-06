@@ -8,6 +8,8 @@ import graphics.data.JoinGameWindowData;
 import graphics.data.NewGameWindowData;
 import graphics.loaders.SceneController;
 
+import java.net.InetSocketAddress;
+
 public class GameDecorator {
     private final static String EMPTY_LINE = "";
     private final static int NEW_PLAYER_ID = 0;
@@ -33,7 +35,9 @@ public class GameDecorator {
                 SceneController.getKeyController(),
                 gameWindowController,
                 newGameGameState,
-                0
+                NodeRole.MASTER,
+                0,
+                null
         );
         gamePlay.start();
     }
@@ -54,16 +58,23 @@ public class GameDecorator {
         return gameStateViewer.getGameState();
     }
 
-    public void decorateJoinGameAs(NodeRole nodeRole) {
-        //send MASTER request to join as nodeRole
-        //getting messages from MASTER for join
-        //some preparations for join game window from this message
-//        Game game = new Game(
-//                gameWindowController,
-//                network,
-//                nodeRole, /* another params from message */
-//        );
-//        game.start();
+    public void decorateJoinGameAs(GameState gameState
+            , NodeRole nodeRole
+            , int my_id
+            , InetSocketAddress masterSocketAddress) {
+        gameWindowController.setFoodField(gameState.getConfig().getFoodStatic(),
+                gameState.getConfig().getFoodPerPlayer());
+        gameWindowController.setFieldSize(gameState.getConfig().getWidth(),
+                gameState.getConfig().getHeight());
+        this.gamePlay = new GamePlay(
+                SceneController.getKeyController(),
+                gameWindowController,
+                gameState,
+                nodeRole,
+                my_id,
+                masterSocketAddress
+        );
+        gamePlay.start();
     }
 
     public GamePlay getGame() {

@@ -17,25 +17,28 @@ public class CurrentGames {
     private final static String X = "X";
     private final static String SPACE = " ";
     private final static String NO_GAMES_FOR_JOIN = "No games for join";
-    private final Map<String, SocketAddress> currentGamesMap;
+    private final Map<String, InetSocketAddress> currentGamesMap;
+    private final Map<SocketAddress, Long> currentTimeMap;
 
     public CurrentGames() {
         currentGamesMap = new ConcurrentHashMap<>();
+        currentTimeMap = new ConcurrentHashMap<>();
     }
 
-    public void update(SocketAddress socketAddress, GameMessage gameMessage) {
+    public void update(InetSocketAddress socketAddress, GameMessage gameMessage) {
         synchronized (currentGamesMap) {
             String currentGame = findStringBySocketAddress(socketAddress);
             if (currentGame != null) {
                 currentGamesMap.remove(currentGame);
             }
+            currentTimeMap.put(socketAddress, System.currentTimeMillis());
             currentGamesMap.put(parseGameMessage(gameMessage), socketAddress);
         }
     }
 
     public String findStringBySocketAddress(SocketAddress socketAddress) {
         synchronized (currentGamesMap) {
-            for (Map.Entry<String, SocketAddress> entry : currentGamesMap.entrySet()) {
+            for (Map.Entry<String, InetSocketAddress> entry : currentGamesMap.entrySet()) {
                 if (entry.getValue().equals(socketAddress))
                     return entry.getKey();
             }
@@ -49,8 +52,14 @@ public class CurrentGames {
             if (currentGamesMap.isEmpty()) {
                 currentGames.add(NO_GAMES_FOR_JOIN);
             } else {
-                for (Map.Entry<String, SocketAddress> entry : currentGamesMap.entrySet()) {
-                    currentGames.add(entry.getKey());
+                for (Map.Entry<String, InetSocketAddress> entry : currentGamesMap.entrySet()) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime - currentTimeMap.get(entry.getValue()) > GAME_ANNOUNCE_TIME_OUT) {
+                        currentTimeMap.remove(entry.getValue());
+                        currentGamesMap.remove(entry.getKey());
+                    } else {
+                        currentGames.add(entry.getKey());
+                    }
                 }
             }
         }
@@ -87,5 +96,9 @@ public class CurrentGames {
         synchronized (currentGamesMap) {
             currentGamesMap.remove(parseGame(gameState.getConfig(), gameState.getPlayers()));
         }
+    }
+
+    public InetSocketAddress findAddressByStringLine(String currentGameLine) {
+        return currentGamesMap.get(currentGameLine);
     }
 }

@@ -1,14 +1,14 @@
 package game.multi.sender.milticast;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 public class ByteMessage {
     private long currentTimeSent;
     private long timeFromFirstSent;
-    private final SocketAddress socketAddress;
+    private final InetSocketAddress socketAddress;
     private final byte[] message;
 
-    public ByteMessage(SocketAddress socketAddress, byte[] message) {
+    public ByteMessage(InetSocketAddress socketAddress, byte[] message) {
         this.currentTimeSent = System.currentTimeMillis();
         this.timeFromFirstSent = 0;
         this.socketAddress = socketAddress;
@@ -30,7 +30,7 @@ public class ByteMessage {
         return currentTimeSent;
     }
 
-    public SocketAddress getSocketAddress() {
+    public InetSocketAddress getSocketAddress() {
         return socketAddress;
     }
 

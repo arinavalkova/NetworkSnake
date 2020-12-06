@@ -36,6 +36,7 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="nameField" layoutX="539.0" layoutY="507.0" />
+      <JFXTextField fx:id="nameField" layoutX="539.0" layoutY="507.0" promptText="Type name" />
+      <Label fx:id="errorField" layoutX="292.0" layoutY="593.0" prefHeight="26.0" prefWidth="370.0" />
    </children>
 </AnchorPane>

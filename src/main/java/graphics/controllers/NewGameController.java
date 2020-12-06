@@ -83,7 +83,9 @@ public class NewGameController {
              *        );
              *        singleGame.start();
              */
-            loadDataFromWindow();
+            if (!loadDataFromWindow()) {
+                return;
+            }
             try {
                 Server.startNewGame(SceneController.load(
                                                   WindowNames.GAME_WINDOW
@@ -94,7 +96,10 @@ public class NewGameController {
         });
     }
 
-    private void loadDataFromWindow() {
+    private boolean loadDataFromWindow() {
+        if (nameField.getText().isEmpty()) {
+            return false;
+        }
         NewGameWindowData.setFieldWidth        ((int)    widthSlider.getValue()           );
         NewGameWindowData.setFieldHeight       ((int)    heightSlider.getValue()          );
         NewGameWindowData.setDeadFoodProb      ((float)  deadFoodProbSlider.getValue()    );
@@ -104,5 +109,6 @@ public class NewGameController {
         NewGameWindowData.setPingDelay         ((int)    pingDelaySlider.getValue()       );
         NewGameWindowData.setStateDelay        ((int)    stateDelaySlider.getValue()      );
         NewGameWindowData.setName              (         nameField.getText()              );
+        return true;
     }
 }

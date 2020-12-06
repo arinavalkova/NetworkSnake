@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class AnnouncmentMessageHandler implements MessageHandler {
     @Override
-    public void handle(SocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
+    public void handle(InetSocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
         receiverFactory.getCurrentGames().update(socketAddress, currentMessage);
     }
 }

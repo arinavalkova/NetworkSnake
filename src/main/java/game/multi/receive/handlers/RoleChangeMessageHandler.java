@@ -8,7 +8,7 @@ import java.net.SocketAddress;
 
 public class RoleChangeMessageHandler implements MessageHandler {
     @Override
-    public void handle(SocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
+    public void handle(InetSocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
         //тоже добавить в сразу не обрабатываемые
         //для олученного id сказать что змейка ZOMBIE
     }

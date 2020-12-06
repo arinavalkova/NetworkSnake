@@ -9,7 +9,11 @@ import java.net.SocketAddress;
 
 public class SteerMessageHandler implements MessageHandler {
     @Override
-    public void handle(SocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
+    public void handle(InetSocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
+        System.out.println(
+                currentMessage.getSenderId() + " " +
+                currentMessage.getSteer().getDirection()
+        );
         SnakeRenovator snakeRenovator = new SnakeRenovator(receiverFactory.getGame());
         snakeRenovator.updateSnakeDirectionByPlayerId(
                 currentMessage.getSenderId(),

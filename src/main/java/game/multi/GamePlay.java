@@ -13,6 +13,7 @@ import main.TimeOut;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Map;
 
@@ -30,19 +31,26 @@ public class GamePlay implements ActionListener {
 
     private int msg_seq;
     private final Object msq_seq_mutex;
+    private final Object issued_id_mutex;
     private int issued_id;
 
     private int my_id;
     private int master_id;
     private int deputy_id;
+    private InetSocketAddress masterSocketAddress;
 
     private boolean gameInfoDrawerWork = true;
-    private SenderMulticast senderMulticast;
+    private final SenderMulticast senderMulticast;
     private boolean gameOver = false;
 
     public GamePlay(KeyController keyController
             , GameWindowController gameWindowController
-            , GameState gameState, int id) {
+            , GameState gameState
+            , NodeRole nodeRole
+            , int id
+            , InetSocketAddress masterSocketAddress
+    ) {
+        this.masterSocketAddress = masterSocketAddress;
         this.senderMulticast = new SenderMulticast(Server.getNetwork());
         this.my_id = id;
         this.issued_id = 0;
@@ -62,9 +70,9 @@ public class GamePlay implements ActionListener {
 //        );
         this.msg_seq = 1;
         //grab master info
-        //установить тут NODE_ROLE
-        this.nodeRole = NodeRole.MASTER;
+        this.nodeRole = nodeRole;
         msq_seq_mutex = new Object();
+        issued_id_mutex = new Object();
     }
 
     private final Thread gameInfoDrawerThread = new Thread(() -> {
@@ -146,11 +154,14 @@ public class GamePlay implements ActionListener {
     }
 
     public int getAndIncIssuedId() {
-        return issued_id++;
+        synchronized (issued_id_mutex) {
+            issued_id++;
+        }
+        return issued_id;
     }
 
     public SocketAddress getMasterSocketAddress() {
-        return null;
+        return masterSocketAddress;
     }
 
     public int getMy_id() {
@@ -175,7 +186,7 @@ public class GamePlay implements ActionListener {
         }
     }
 
-    public  SenderMulticast getSenderMulticast() {
+    public SenderMulticast getSenderMulticast() {
         return senderMulticast;
     }
 }

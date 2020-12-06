@@ -3,6 +3,7 @@ package game.multi.sender.milticast;
 import game.multi.GamePlay;
 import game.multi.Network;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,12 +45,12 @@ public class ConfirmSender {
         checkConfirmThread.start();
     }
 
-    public void send(int msg_seq, byte[] message, SocketAddress socketAddress) {
+    public void send(int msg_seq, byte[] message, InetSocketAddress socketAddress) {
         addMessageForWaitingConfirming(msg_seq, message, socketAddress);
         network.sendToSocket(message, socketAddress);
     }
 
-    private void addMessageForWaitingConfirming(int messageSeq, byte[] message, SocketAddress socketAddress) {
+    private void addMessageForWaitingConfirming(int messageSeq, byte[] message, InetSocketAddress socketAddress) {
         synchronized (unconfirmedMessages) {
             unconfirmedMessages.put(messageSeq, new ByteMessage(socketAddress, message));
         }

@@ -11,13 +11,19 @@ import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.MultipleSelectionModel;
 import main.TimeOut;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class JoinWindowController {
 
     private final static int GAMES_LIST_TIME_OUT = 5000;
+
+//    @FXML
+//    private Label errorField;
 
     @FXML
     private JFXTextField nameField;
@@ -44,7 +50,6 @@ public class JoinWindowController {
     private void updateGamesList() {
         Thread updateGameListThread = new Thread(() -> {
             while (!Server.isStopped()) {
-                    System.out.println("printing");
                     Platform.runLater(() -> {
                         gamesListView.getItems().clear();
                         gamesListView.getItems().addAll(Server
@@ -76,21 +81,50 @@ public class JoinWindowController {
 
     private void addJoinButtonHandler() {
         joinButton.setOnAction(e -> {
-            loadDataFromWindow();
-            try {
-                Server.joinGame(SceneController.load(
-                        WindowNames.GAME_WINDOW
-                ).getController(), viewerModeCheckBox.isSelected() ?
-                        NodeRole.VIEWER
-                        :
-                        NodeRole.NORMAL);
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+           Thread joinWork = new Thread(() -> {
+               if (!loadDataFromWindow()) {
+                   return;
+               }
+
+               InetSocketAddress socketAddress = getCurrentGameAddress();
+               if (socketAddress == null) {
+                   return;
+               }
+
+               String serverAnswer = Server.joinGameIfSuccess(viewerModeCheckBox.isSelected() ?
+                               NodeRole.VIEWER
+                               :
+                               NodeRole.NORMAL,
+                       socketAddress,
+                       JoinGameWindowData.getName());
+               if (serverAnswer != null) {
+                   //errorField.setText(serverAnswer);
+               }
+           });
+           joinWork.start();
         });
     }
 
-    private void loadDataFromWindow() {
+    private InetSocketAddress getCurrentGameAddress() {
+        InetSocketAddress inetSocketAddress = null;
+        String currentGameLine = gamesListView.getSelectionModel().getSelectedItem();
+        if (currentGameLine == null) {
+            return null;
+        }
+        while (inetSocketAddress == null) {
+            inetSocketAddress = Server
+                    .getReceiverFactory()
+                    .getCurrentGames()
+                    .findAddressByStringLine(currentGameLine);
+        }
+        return inetSocketAddress;
+    }
+
+    private boolean loadDataFromWindow() {
+        if (nameField.getText().isEmpty()) {
+            return false;
+        }
         JoinGameWindowData.setName(nameField.getText());
+        return true;
     }
 }

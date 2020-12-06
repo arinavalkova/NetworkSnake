@@ -1,19 +1,24 @@
 package game.multi.proto.creators;
 
 import dto.GameMessage;
+import dto.PlayerType;
 
 public class JoinMessageCreator {
-    private final Integer msg_seq;
-    private final Integer sender_id;
-    private final Integer receiver_id;
+    private final GameMessage joinMessage;
 
-    public JoinMessageCreator(Integer msg_seq, Integer sender_id, Integer receiver_id) {
-        this.msg_seq = msg_seq;
-        this.sender_id = sender_id;
-        this.receiver_id = receiver_id;
+    public JoinMessageCreator(Integer msg_seq, boolean only_view, String name) {
+        GameMessage.JoinMsg joinMsg = GameMessage.JoinMsg.newBuilder()
+                .setPlayerType(PlayerType.HUMAN)
+                .setOnlyView(only_view)
+                .setName(name)
+                .build();
+        this.joinMessage = GameMessage.newBuilder()
+                .setMsgSeq(msg_seq)
+                .setJoin(joinMsg)
+                .build();
     }
 
     public byte[] getBytes() {
-        return null;
+        return joinMessage.toByteArray();
     }
 }
