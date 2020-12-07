@@ -23,11 +23,7 @@ public class DeputyPlayer implements Player {
 //                    gamePlay.getMasterSocketAddress()
 //            );
             gamePlay.setNodeRole(NodeRole.VIEWER);
-            return;
         }
-
-        Direction moveDirection = gamePlay.getKeyController().getKey();
-        int msg_seq = gamePlay.getAndIncMsgSeq();
 //        gamePlay.getConfirmSender().send(
 //                msg_seq,
 //                new SteerMessageCreator(

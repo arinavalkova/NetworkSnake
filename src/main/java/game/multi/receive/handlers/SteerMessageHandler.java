@@ -1,20 +1,16 @@
 package game.multi.receive.handlers;
 
 import dto.GameMessage;
+import game.multi.GamePlay;
 import game.multi.proto.renovators.SnakeRenovator;
-import game.multi.receive.ReceiverFactory;
+import game.multi.receive.ReceiverMulticast;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 
 public class SteerMessageHandler implements MessageHandler {
     @Override
-    public void handle(InetSocketAddress socketAddress, ReceiverFactory receiverFactory, GameMessage currentMessage) {
-        System.out.println(
-                currentMessage.getSenderId() + " " +
-                currentMessage.getSteer().getDirection()
-        );
-        SnakeRenovator snakeRenovator = new SnakeRenovator(receiverFactory.getGame());
+    public void handle(InetSocketAddress socketAddress, GamePlay gamePlay, GameMessage currentMessage) {
+        SnakeRenovator snakeRenovator = new SnakeRenovator(gamePlay);
         snakeRenovator.updateSnakeDirectionByPlayerId(
                 currentMessage.getSenderId(),
                 currentMessage.getSteer().getDirection()

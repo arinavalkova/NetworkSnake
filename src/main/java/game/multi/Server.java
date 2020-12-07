@@ -4,23 +4,18 @@ import dto.GameMessage;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.proto.creators.JoinMessageCreator;
-import game.multi.receive.ReceiverFactory;
+import game.multi.receive.ReceiverMulticast;
 import game.multi.sender.milticast.ByteMessage;
-import game.multi.sender.milticast.SenderMulticast;
 import graphics.controllers.GameWindowController;
 import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 public class Server {
     private static Network network;
-    private static ReceiverFactory receiverFactory;
+    private static ReceiverMulticast receiverMulticast;
     private static GamePlay gamePlay = null;
     private static boolean isStopped;
 
@@ -28,7 +23,6 @@ public class Server {
         GameDecorator gameDecorator = new GameDecorator(controller, network);
         gameDecorator.decorateNewGame();
         Server.gamePlay = gameDecorator.getGame();
-        receiverFactory.setGamePlay(Server.gamePlay);
     }
 
     public static String joinGameIfSuccess(NodeRole nodeRole, InetSocketAddress socketAddress, String name) {
@@ -75,7 +69,6 @@ public class Server {
         GameDecorator gameDecorator = new GameDecorator(controller, network);
         gameDecorator.decorateJoinGameAs(gameState, nodeRole, my_id, masterSocketAddress);
         Server.gamePlay = gameDecorator.getGame();
-        receiverFactory.setGamePlay(Server.gamePlay);
     }
 
     public static Network getNetwork() {
@@ -85,13 +78,13 @@ public class Server {
     public static void start() {
         isStopped = false;
         network = new Network();
-        receiverFactory = new ReceiverFactory(network, gamePlay);
-        receiverFactory.start();
+        receiverMulticast = new ReceiverMulticast(network);
+        receiverMulticast.start();
     }
 
     public static void stop() {
         isStopped = true;
-        receiverFactory.stop();
+        receiverMulticast.stop();
         if (gamePlay != null) {
             gamePlay.stop();
         }
@@ -102,8 +95,8 @@ public class Server {
         gamePlay.stop();
     }
 
-    public static ReceiverFactory getReceiverFactory() {
-        return receiverFactory;
+    public static ReceiverMulticast getReceiverMulticast() {
+        return receiverMulticast;
     }
 
     public static boolean isStopped() {
@@ -115,6 +108,6 @@ public class Server {
     }
 
     public static void deleteFromCurrentGames(GameState gameState) {
-        receiverFactory.getCurrentGames().deleteGame(gameState);
+        receiverMulticast.getCurrentGames().deleteGame(gameState);
     }
 }

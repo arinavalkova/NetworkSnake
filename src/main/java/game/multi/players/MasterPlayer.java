@@ -49,11 +49,6 @@ public class MasterPlayer implements Player {
                 ).getBytes()
         );     /* Invite send thread updating */
 
-
-        Direction directionFromKeyController = gamePlay.getKeyController().getKey();
-        new SnakeRenovator(gamePlay)
-                .updateSnakeDirectionByPlayerId(gamePlay.getMy_id(), directionFromKeyController);
-
         Map<Integer, GameState.Coord> testMoveCoords = testMoveAllPlayers(gamePlay);
         if (!checkAllPlayers(testMoveCoords, gamePlay)) {
             //MASTER is gone
@@ -103,13 +98,13 @@ public class MasterPlayer implements Player {
     }
 
     private Map<Integer, GameState.Coord> findSameCoordsInMap(int player_id,
-                                                      GameState.Coord coord,
-                                                      Map<Integer, GameState.Coord> mapOfCoords
+                                                              GameState.Coord coord,
+                                                              Map<Integer, GameState.Coord> mapOfCoords
     ) {
         Map<Integer, GameState.Coord> map = new HashMap<>();
         for (Map.Entry<Integer, GameState.Coord> entry : mapOfCoords.entrySet()) {
             if (entry.getValue().getX() == coord.getX() && entry.getValue().getY() == coord.getY() &&
-            entry.getKey() != player_id) {
+                    entry.getKey() != player_id) {
                 map.put(entry.getKey(), entry.getValue());
             }
         }

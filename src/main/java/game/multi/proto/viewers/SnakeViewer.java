@@ -1,6 +1,7 @@
 package game.multi.proto.viewers;
 
 import dto.Direction;
+import dto.GamePlayer;
 import dto.GameState;
 
 import java.util.List;
@@ -94,5 +95,10 @@ public class SnakeViewer {
         GameState.Coord headCoord = gameState.getSnakes(snakeId).getPoints(0);
         Direction snakeDirection = gameState.getSnakes(snakeId).getHeadDirection();
         return moveCoord(headCoord, snakeDirection, gameState);
+    }
+
+    public Direction getSnakeDirection(int playerId) {
+        int snakeId = getSnakeIdByPlayerId(playerId);
+        return gameState.getSnakes(snakeId).getHeadDirection();
     }
 }

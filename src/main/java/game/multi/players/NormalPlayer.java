@@ -13,17 +13,6 @@ public class NormalPlayer implements Player {
         if (gamePlay.getGameWindowController().getButtonNodeRole() == NodeRole.VIEWER) {
             //send to master that my snake ZOMBIE
             gamePlay.setNodeRole(NodeRole.VIEWER);
-            return;
         }
-        Direction moveDirection = gamePlay.getKeyController().getKey();
-        Server.getNetwork().sendToSocket(
-                new SteerMessageCreator(
-                        gamePlay.getAndIncMsgSeq(),
-                        gamePlay.getMy_id(),
-                        moveDirection
-                ).getBytes(),
-                new GamePlayersViewer(gamePlay.getGameState())
-                        .getMasterAddress()
-        );
     }
 }

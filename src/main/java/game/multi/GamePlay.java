@@ -4,6 +4,7 @@ import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
 import game.multi.proto.viewers.GamePlayersViewer;
+import game.multi.receive.ReceiverUnicast;
 import game.multi.sender.milticast.SenderMulticast;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.KeyController;
@@ -25,6 +26,8 @@ public class GamePlay implements ActionListener {
     private final KeyController keyController;
     //private final ProtoParser protoParser;
 
+    private final ReceiverUnicast receiverUnicast;
+
     private GameState gameState;
 
     private NodeRole nodeRole;
@@ -43,7 +46,7 @@ public class GamePlay implements ActionListener {
     private final SenderMulticast senderMulticast;
     private boolean gameOver = false;
 
-    public GamePlay(KeyController keyController
+    public GamePlay(Network network
             , GameWindowController gameWindowController
             , GameState gameState
             , NodeRole nodeRole
@@ -61,7 +64,8 @@ public class GamePlay implements ActionListener {
                 this
         );
         this.mainTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
-        this.keyController = keyController;
+        this.keyController = new KeyController(this);
+        this.keyController.start();
 //        this.confirmSender = new ConfirmSender(
 //                gameConfig.getPingDelayMs(),
 //                gameConfig.getNodeTimeoutMs(),
@@ -73,6 +77,9 @@ public class GamePlay implements ActionListener {
         this.nodeRole = nodeRole;
         msq_seq_mutex = new Object();
         issued_id_mutex = new Object();
+        this.receiverUnicast = new ReceiverUnicast(network, this);
+
+
     }
 
     private final Thread gameInfoDrawerThread = new Thread(() -> {
@@ -83,6 +90,7 @@ public class GamePlay implements ActionListener {
     });
 
     public void start() {
+        receiverUnicast.start();
         gameInfoDrawerThread.start();
         gameFieldDrawer.drawField(gameState);
         mainTimer.start();
@@ -98,6 +106,7 @@ public class GamePlay implements ActionListener {
     }
 
     public void stop() {
+        receiverUnicast.stop();
         Server.deleteFromCurrentGames(gameState);
         senderMulticast.stop();
         gameInfoDrawerWork = false;

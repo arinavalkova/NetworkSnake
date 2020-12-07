@@ -11,10 +11,8 @@ import graphics.loaders.SceneController;
 import graphics.loaders.WindowNames;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.MultipleSelectionModel;
 import main.TimeOut;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -53,7 +51,7 @@ public class JoinWindowController {
                     Platform.runLater(() -> {
                         gamesListView.getItems().clear();
                         gamesListView.getItems().addAll(Server
-                                .getReceiverFactory()
+                                .getReceiverMulticast()
                                 .getCurrentGames()
                                 .getCurrentGames()
                         );
@@ -113,7 +111,7 @@ public class JoinWindowController {
         }
         while (inetSocketAddress == null) {
             inetSocketAddress = Server
-                    .getReceiverFactory()
+                    .getReceiverMulticast()
                     .getCurrentGames()
                     .findAddressByStringLine(currentGameLine);
         }

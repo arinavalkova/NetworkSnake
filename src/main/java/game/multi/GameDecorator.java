@@ -32,7 +32,7 @@ public class GameDecorator {
                 newGameGameState.getConfig().getHeight());
 
         this.gamePlay = new GamePlay(
-                SceneController.getKeyController(),
+                network,
                 gameWindowController,
                 newGameGameState,
                 NodeRole.MASTER,
@@ -67,7 +67,7 @@ public class GameDecorator {
         gameWindowController.setFieldSize(gameState.getConfig().getWidth(),
                 gameState.getConfig().getHeight());
         this.gamePlay = new GamePlay(
-                SceneController.getKeyController(),
+                network,
                 gameWindowController,
                 gameState,
                 nodeRole,
