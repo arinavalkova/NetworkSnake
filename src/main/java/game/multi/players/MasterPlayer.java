@@ -54,10 +54,6 @@ public class MasterPlayer implements Player {
             //MASTER is gone
             gamePlay.setGameOver(true);
         }
-        Server.getNetwork().sendToListOfAddresses(
-                new GamePlayersViewer(gameState).getSocketAddressOfAllPlayersWithOutMaster(),
-                new StateMessageCreator(gamePlay.getAndIncMsgSeq(), gameState).getBytes()
-        );
     }
 
     private boolean checkAllPlayers(Map<Integer, GameState.Coord> testMoveMap, GamePlay gamePlay) {

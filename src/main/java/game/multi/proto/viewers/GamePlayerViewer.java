@@ -20,4 +20,9 @@ public class GamePlayerViewer {
         }
         return null;
     }
+
+    public boolean isPlayerMaster(int playerId) {
+        int player = findPlayerById(playerId);
+        return gameState.getPlayers().getPlayers(player).getRole() == NodeRole.MASTER;
+    }
 }

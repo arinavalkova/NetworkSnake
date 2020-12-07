@@ -15,5 +15,7 @@ public class SteerMessageHandler implements MessageHandler {
                 currentMessage.getSenderId(),
                 currentMessage.getSteer().getDirection()
         );
+//        gamePlay.getPlayersMap().get(gamePlay.getNodeRole()).play(gamePlay);
+//        gamePlay.getGameFieldDrawer().redrawField(gamePlay);
     }
 }

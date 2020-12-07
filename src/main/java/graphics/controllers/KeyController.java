@@ -24,6 +24,7 @@ public class KeyController {
     }
 
     public void setKeyPressed(KeyCode keyCode) {
+        System.out.println("getted key");
         Direction supposedKey = null;
         if (keyCode == KeyCode.W) {
             supposedKey = Direction.UP;
@@ -43,6 +44,7 @@ public class KeyController {
         if (gamePlay.getNodeRole() == NodeRole.MASTER) {
             new SnakeRenovator(gamePlay).updateSnakeDirectionByPlayerId(gamePlay.getMy_id(), gottenDirection);
         } else {
+            gamePlay.getGameFieldDrawer().redrawField(gamePlay);
             Server.getNetwork().sendToSocket(
                     new SteerMessageCreator(
                             gamePlay.getAndIncMsgSeq(),
@@ -52,8 +54,9 @@ public class KeyController {
                     new GamePlayersViewer(gamePlay.getGameState())
                             .getMasterAddress()
             );
-            System.out.println("sent");
+            gamePlay.getGameFieldDrawer().redrawField(gamePlay);
         }
+        System.out.println("end of function getted key");
     }
 
     public Direction getAllowedKey(Direction supposedDirection, Direction currentDirection) {

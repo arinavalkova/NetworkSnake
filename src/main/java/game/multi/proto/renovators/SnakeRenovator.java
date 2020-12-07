@@ -64,7 +64,6 @@ public class SnakeRenovator {
     }
 
     public void updateSnakeDirectionByPlayerId(int playerId, Direction direction) {
-        System.out.println("started updating direction");
         GameState gameState = gamePlay.getGameState();
         int snakeId = new SnakeViewer(gameState).getSnakeIdByPlayerId(playerId);
         gameState = GameState.newBuilder(gameState)
@@ -76,7 +75,6 @@ public class SnakeRenovator {
                                 .build())
                 .build();
         gamePlay.updateGameState(gameState);
-        System.out.println("stopped updating direction");
     }
 
     public void updateSnakeStateByPlayerId(int playerId, GameState.Snake.SnakeState snakeState) {

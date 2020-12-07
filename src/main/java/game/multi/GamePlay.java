@@ -3,6 +3,8 @@ package game.multi;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
+import game.multi.proto.creators.StateMessageCreator;
+import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
 import game.multi.receive.ReceiverUnicast;
 import game.multi.sender.milticast.SenderMulticast;
@@ -93,7 +95,9 @@ public class GamePlay implements ActionListener {
         receiverUnicast.start();
         gameInfoDrawerThread.start();
         gameFieldDrawer.drawField(gameState);
-        mainTimer.start();
+        if (new GamePlayerViewer(gameState).isPlayerMaster(my_id)) {
+            mainTimer.start();
+        }
     }
 
     @Override
@@ -103,6 +107,10 @@ public class GamePlay implements ActionListener {
         }
         playersMap.get(nodeRole).play(this);
         getGameFieldDrawer().redrawField(this);
+        Server.getNetwork().sendToListOfAddresses(
+                new GamePlayersViewer(gameState).getSocketAddressOfAllPlayersWithOutMaster(),
+                new StateMessageCreator(getAndIncMsgSeq(), gameState).getBytes()
+        );
     }
 
     public void stop() {
@@ -197,5 +205,9 @@ public class GamePlay implements ActionListener {
 
     public SenderMulticast getSenderMulticast() {
         return senderMulticast;
+    }
+
+    public Map<NodeRole, Player> getPlayersMap() {
+        return playersMap;
     }
 }
