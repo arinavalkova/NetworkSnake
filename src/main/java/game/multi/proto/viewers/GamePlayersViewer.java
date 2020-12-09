@@ -43,6 +43,7 @@ public class GamePlayersViewer {
         List<String> answer = new ArrayList<>();
         List<GamePlayer> gamePlayerList = gameState.getPlayers().getPlayersList();
         for (GamePlayer currentGamePlayer : gamePlayerList) {
+            //if (currentGamePlayer.getRole() != NodeRole.VIEWER)
             answer.add(
                     currentGamePlayer.getName() + SPACE +
                             currentGamePlayer.getId() + SPACE +
@@ -57,5 +58,24 @@ public class GamePlayersViewer {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    public InetSocketAddress getDeputySocketAddress() {
+        GamePlayer deputyPlayer = findDeputyPlayer();
+        if (deputyPlayer == null) {
+            return null;
+        }
+        return new InetSocketAddress(deputyPlayer.getIpAddress(),
+                deputyPlayer.getPort());
+    }
+
+    public GamePlayer findDeputyPlayer() {
+        List<GamePlayer> players = gameState.getPlayers().getPlayersList();
+        for (GamePlayer currentGamePlayer : players) {
+            if (currentGamePlayer.getRole() == NodeRole.DEPUTY) {
+                return currentGamePlayer;
+            }
+        }
+        return null;
     }
 }

@@ -14,21 +14,26 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 public class Server {
+    private static final Integer UNKNOWN_SENDER_ID = -1;
     private static Network network;
     private static ReceiverMulticast receiverMulticast;
     private static GamePlay gamePlay = null;
     private static boolean isStopped;
 
     public static void startNewGame(GameWindowController controller) {
-        GameDecorator gameDecorator = new GameDecorator(controller, network);
-        gameDecorator.decorateNewGame();
-        Server.gamePlay = gameDecorator.getGame();
+        GameFormer gameFormer = new GameFormer(controller, network);
+        gameFormer.decorateNewGame();
+        Server.gamePlay = gameFormer.getGame();
     }
 
     public static String joinGameIfSuccess(NodeRole nodeRole, InetSocketAddress socketAddress, String name) {
         try {
             network.sendToSocket(
-                    new JoinMessageCreator(0, false, name).getBytes(),
+                    new JoinMessageCreator(0,
+                            nodeRole == NodeRole.VIEWER,
+                            name,
+                            UNKNOWN_SENDER_ID
+                    ).getBytes(),
                     socketAddress
             );
             boolean isAckMessage = false;
@@ -42,13 +47,15 @@ public class Server {
             if (ackOrErrorFromServer.hasError()) {
                 return ackOrErrorFromServer.getError().getErrorMessage();
             }
+            GameWindowController gameWindowController = SceneController.load(
+                    WindowNames.GAME_WINDOW
+            ).getController();
+            gameWindowController.setChangeRoleButton(nodeRole);
             int my_id = ackOrErrorFromServer.getReceiverId();
             ByteMessage gameStateFromServer = network.receiveFromSocket();
             GameMessage gameStateMessage = GameMessage.parseFrom(gameStateFromServer.getMessage());
             GameState gameState = gameStateMessage.getState().getState();
-            joinGame(SceneController.load(
-                    WindowNames.GAME_WINDOW
-                    ).getController(),
+            joinGame(gameWindowController,
                     nodeRole,
                     gameState,
                     my_id,
@@ -66,9 +73,9 @@ public class Server {
             , int my_id
             , InetSocketAddress masterSocketAddress
     ) {
-        GameDecorator gameDecorator = new GameDecorator(controller, network);
-        gameDecorator.decorateJoinGameAs(gameState, nodeRole, my_id, masterSocketAddress);
-        Server.gamePlay = gameDecorator.getGame();
+        GameFormer gameFormer = new GameFormer(controller, network);
+        gameFormer.decorateJoinGameAs(gameState, nodeRole, my_id, masterSocketAddress);
+        Server.gamePlay = gameFormer.getGame();
     }
 
     public static Network getNetwork() {

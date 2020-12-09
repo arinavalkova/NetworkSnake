@@ -1,6 +1,5 @@
 package graphics.loaders;
 
-import graphics.controllers.KeyController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

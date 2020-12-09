@@ -3,15 +3,22 @@ package game.multi;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
+import game.multi.proto.creators.JoinMessageCreator;
 import game.multi.proto.creators.StateMessageCreator;
+import game.multi.proto.renovators.GamePlayerRenovator;
+import game.multi.proto.renovators.GamePlayersRenovator;
 import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
 import game.multi.receive.ReceiverUnicast;
 import game.multi.sender.milticast.SenderMulticast;
 import graphics.controllers.GameWindowController;
-import graphics.controllers.KeyController;
+import graphics.controllers.key.KeyController;
 import graphics.drawers.GameFieldDrawer;
 import main.TimeOut;
+import stoppers.DeputyStopper;
+import stoppers.MasterStopper;
+import stoppers.NormalStopper;
+import stoppers.Stopper;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -22,11 +29,12 @@ import java.util.Map;
 
 public class GamePlay implements ActionListener {
     private final Integer GAME_INFO_DRAWER_TIME_OUT = 5000;
+    private final Integer CHANGE_MODE_TIME_OUT = 1000;
+
     private GameWindowController gameWindowController;
     private final GameFieldDrawer gameFieldDrawer;
-    private final Timer mainTimer;
+    private final Timer masterTimer;
     private final KeyController keyController;
-    //private final ProtoParser protoParser;
 
     private final ReceiverUnicast receiverUnicast;
 
@@ -44,17 +52,22 @@ public class GamePlay implements ActionListener {
     private int deputy_id;
     private InetSocketAddress masterSocketAddress;
 
+    private final RoleChanger roleChanger;
+
     private boolean gameInfoDrawerWork = true;
     private final SenderMulticast senderMulticast;
-    private boolean gameOver = false;
+
+    private final MasterPlayer masterPlayer;
+    private final Thread modeButtonControllerThread;
+    private boolean isModeButtonControllerThreadWork = true;
 
     public GamePlay(Network network
             , GameWindowController gameWindowController
             , GameState gameState
             , NodeRole nodeRole
             , int id
-            , InetSocketAddress masterSocketAddress
-    ) {
+            , InetSocketAddress masterSocketAddress) {
+        this.roleChanger = new RoleChanger();
         this.masterSocketAddress = masterSocketAddress;
         this.senderMulticast = new SenderMulticast(Server.getNetwork());
         this.my_id = id;
@@ -65,14 +78,15 @@ public class GamePlay implements ActionListener {
                 gameWindowController.getCanvas().getGraphicsContext2D(),
                 this
         );
-        this.mainTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
+        this.masterTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
         this.keyController = new KeyController(this);
         this.keyController.start();
 //        this.confirmSender = new ConfirmSender(
 //                gameConfig.getPingDelayMs(),
 //                gameConfig.getNodeTimeoutMs(),
 //                network,
-//                this
+//                this,
+//                roleChanger
 //        );
         this.msg_seq = 1;
         //grab master info
@@ -80,8 +94,29 @@ public class GamePlay implements ActionListener {
         msq_seq_mutex = new Object();
         issued_id_mutex = new Object();
         this.receiverUnicast = new ReceiverUnicast(network, this);
+        masterPlayer = new MasterPlayer();
 
-
+        this.modeButtonControllerThread = new Thread(() -> {
+            while (isModeButtonControllerThreadWork) {
+                NodeRole gottenNodeRole = gameWindowController.getButtonNodeRole();
+                if (gottenNodeRole != null) {
+                    //roleChanger.change(this, gottenNodeRole);
+                    if (gottenNodeRole == NodeRole.VIEWER) {
+                        stoppersMap.get(nodeRole).start(this);
+                    } else if (gottenNodeRole == NodeRole.NORMAL) {
+                        network.sendToSocket(
+                                new JoinMessageCreator(0,
+                                        false,
+                                        new GamePlayerViewer(gameState).getPlayerName(my_id), my_id)
+                                        .getBytes(),
+                                masterSocketAddress
+                        );//to confirm
+                    }
+                    gameWindowController.changedRoleHandled();
+                }
+                new TimeOut(CHANGE_MODE_TIME_OUT).start();
+            }
+        });
     }
 
     private final Thread gameInfoDrawerThread = new Thread(() -> {
@@ -95,17 +130,17 @@ public class GamePlay implements ActionListener {
         receiverUnicast.start();
         gameInfoDrawerThread.start();
         gameFieldDrawer.drawField(gameState);
-        if (new GamePlayerViewer(gameState).isPlayerMaster(my_id)) {
-            mainTimer.start();
+        modeButtonControllerThread.start();
+        if (nodeRole == NodeRole.MASTER) {
+            masterTimer.start();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (gameOver) {
-            stop();
+        if (!masterPlayer.play(this)) {
+            stop();//changerRole.change(gamePlay, VIEWER)
         }
-        playersMap.get(nodeRole).play(this);
         getGameFieldDrawer().redrawField(this);
         Server.getNetwork().sendToListOfAddresses(
                 new GamePlayersViewer(gameState).getSocketAddressOfAllPlayersWithOutMaster(),
@@ -119,9 +154,8 @@ public class GamePlay implements ActionListener {
         senderMulticast.stop();
         gameInfoDrawerWork = false;
         gameFieldDrawer.drawEndOfGame(gameState);
-        mainTimer.stop();
-        //maybe something else for end of game
-        //stop receiver unicast
+        masterTimer.stop();
+        isModeButtonControllerThreadWork = false;
     }
 
     public GameFieldDrawer getGameFieldDrawer() {
@@ -136,13 +170,6 @@ public class GamePlay implements ActionListener {
         return nodeRole;
     }
 
-    private static final Map<NodeRole, Player> playersMap = Map.of(
-            NodeRole.DEPUTY, new DeputyPlayer(),
-            NodeRole.MASTER, new MasterPlayer(),
-            NodeRole.NORMAL, new NormalPlayer(),
-            NodeRole.VIEWER, new ViewerPlayer()
-    );
-
     public KeyController getKeyController() {
         return keyController;
     }
@@ -151,16 +178,8 @@ public class GamePlay implements ActionListener {
         this.nodeRole = nodeRole;
     }
 
-    public void setGameOver(boolean state) {
-        gameOver = state;
-    }
-
 //    public ConfirmSender getConfirmSender() {
 //        return confirmSender;
-//    }
-
-//    public ProtoParser getProtoParser() {
-//        return protoParser;
 //    }
 
     public int getAndIncMsgSeq() {
@@ -207,7 +226,19 @@ public class GamePlay implements ActionListener {
         return senderMulticast;
     }
 
-    public Map<NodeRole, Player> getPlayersMap() {
-        return playersMap;
+    private static final Map<NodeRole, Stopper> stoppersMap = Map.of(
+            NodeRole.MASTER, new MasterStopper(),
+            NodeRole.NORMAL, new NormalStopper(),
+            NodeRole.DEPUTY, new DeputyStopper()
+    );
+
+    public void setMyId(int receiverId) {
+        my_id = receiverId;
+    }
+
+    public void updateDeputy(Integer playerId) {
+        if (new GamePlayersViewer(gameState).findDeputyPlayer() == null) {
+            new GamePlayerRenovator(this).updateNodeRole(playerId, NodeRole.DEPUTY);
+        }
     }
 }

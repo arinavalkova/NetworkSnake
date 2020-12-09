@@ -6,7 +6,7 @@ import dto.PlayerType;
 public class JoinMessageCreator {
     private final GameMessage joinMessage;
 
-    public JoinMessageCreator(Integer msg_seq, boolean only_view, String name) {
+    public JoinMessageCreator(Integer msg_seq, boolean only_view, String name, Integer sender_id) {
         GameMessage.JoinMsg joinMsg = GameMessage.JoinMsg.newBuilder()
                 .setPlayerType(PlayerType.HUMAN)
                 .setOnlyView(only_view)
@@ -15,6 +15,7 @@ public class JoinMessageCreator {
         this.joinMessage = GameMessage.newBuilder()
                 .setMsgSeq(msg_seq)
                 .setJoin(joinMsg)
+                .setSenderId(sender_id)
                 .build();
     }
 

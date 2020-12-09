@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateRenovator {
+    private static final Integer UNKNOWN_SENDER_ID = -1;
     private GamePlay gamePlay;
 
     public GameStateRenovator(GamePlay gamePlay) {
@@ -76,19 +77,43 @@ public class GameStateRenovator {
         gamePlay.updateGameState(gameState);
     }
 
-    public Integer tryAddNewPlayer(String name, InetSocketAddress socketAddress, NodeRole nodeRole) {
-        int playerId = gamePlay.getAndIncIssuedId();//////////////it is tooo bad
-        if (!addSnake(playerId)) {
-            return null;
+    public Integer tryAddNewPlayer(
+            String name,
+            InetSocketAddress socketAddress,
+            NodeRole nodeRole,
+            Integer senderId) {
+        int playerId;
+        if (senderId.equals(UNKNOWN_SENDER_ID)) {
+            playerId = gamePlay.getAndIncIssuedId();//////////////it is tooo bad
+            if (!addSnake(playerId)) {
+                return null;
+            }
+            GamePlayersRenovator gamePlayersRenovator = new GamePlayersRenovator(gamePlay);
+            gamePlayersRenovator.addPlayer(name
+                    , playerId
+                    , socketAddress.getAddress().getHostAddress()
+                    , socketAddress.getPort()
+                    , nodeRole
+                    , PlayerType.HUMAN
+                    , 0);
+        } else {
+            playerId = senderId;
+            if (!addSnake(playerId)) {
+                return null;
+            }
+            new GamePlayerRenovator(gamePlay).updateNodeRole(playerId, NodeRole.NORMAL);
         }
+        return playerId;
+    }
+
+    public int addViewerPlayer(InetSocketAddress socketAddress, String name) {
+        int player_id = gamePlay.getAndIncIssuedId();
         GamePlayersRenovator gamePlayersRenovator = new GamePlayersRenovator(gamePlay);
-        gamePlayersRenovator.addPlayer(name
-                , playerId
+        gamePlayersRenovator.addViewer(player_id
                 , socketAddress.getAddress().getHostAddress()
                 , socketAddress.getPort()
-                , nodeRole
-                , PlayerType.HUMAN
-                , 0);
-        return playerId;
+                , name
+        );
+        return player_id;
     }
 }

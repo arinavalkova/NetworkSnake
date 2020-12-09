@@ -15,7 +15,6 @@ public class SnakeRenovator {
         this.gamePlay = gamePlay;
     }
 
-
     public GameState.Coord snakeMove(int playerId) {
         GameState gameState = gamePlay.getGameState();
         int snakeId = new SnakeViewer(gameState).getSnakeIdByPlayerId(playerId);
@@ -98,6 +97,20 @@ public class SnakeRenovator {
                 .removeSnakes(snakeId)
                 .build();
         gamePlay.updateGameState(gameState);
+    }
+
+    public GameState.Snake getMySnake() {
+        int my_id = gamePlay.getMy_id();
+        Integer snake_id = new SnakeViewer(gamePlay.getGameState()).getSnakeIdByPlayerId(my_id);
+        GameState.Snake snake = null;
+        try {
+            snake = gamePlay
+                    .getGameState()
+                    .getSnakes(snake_id);
+        } catch (NullPointerException nullPointerException) {
+            return null;
+        }
+        return snake;
     }
 }
 

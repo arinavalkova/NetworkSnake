@@ -10,7 +10,7 @@ import graphics.loaders.SceneController;
 
 import java.net.InetSocketAddress;
 
-public class GameDecorator {
+public class GameFormer {
     private final static String EMPTY_LINE = "";
     private final static int NEW_PLAYER_ID = 0;
     private final static int NEW_GAME_STATE_NUM = 0;
@@ -19,7 +19,7 @@ public class GameDecorator {
     private final Network network;
     private GamePlay gamePlay;
 
-    public GameDecorator(GameWindowController gameWindowController, Network network) {
+    public GameFormer(GameWindowController gameWindowController, Network network) {
         this.network = network;
         this.gameWindowController = gameWindowController;
     }

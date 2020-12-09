@@ -2,7 +2,7 @@ package graphics.drawers;
 
 import dto.GameState;
 import game.multi.GamePlay;
-import game.multi.proto.renovators.GameStateRenovator;
+import game.multi.proto.renovators.SnakeRenovator;
 import game.multi.proto.viewers.GameStateViewer;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
@@ -60,10 +60,23 @@ public class GameFieldDrawer {
     }
 
     private void drawSnakes(GamePlay gamePlay) {
-        List<GameState.Coord> snakeCoords = new GameStateViewer(gamePlay.getGameState()).getAllSnakesCoords();
-        for (GameState.Coord currentCoord : snakeCoords) {
-            drawCell(currentCoord, DrawerColor.SNAKE);
+        List<GameState.Snake> allSnakesWithoutMySnake =
+                new GameStateViewer(gamePlay.getGameState()).getAllSnakesWithoutMySnake();
+        for (GameState.Snake currentSnake : allSnakesWithoutMySnake) {
+            drawSnake(currentSnake, DrawerColor.SNAKES, DrawerColor.HEAD_SNAKES);
         }
+        GameState.Snake mySnake = new SnakeRenovator(gamePlay).getMySnake();
+        if (mySnake != null) {
+            drawSnake(mySnake, DrawerColor.MY_SNAKE, DrawerColor.HEAD_MY_SNAKE);
+        }
+    }
+
+    private void drawSnake(GameState.Snake snake, String snakeColor, String headColor) {
+        List<GameState.Coord> snakeCoords = snake.getPointsList();
+        for (GameState.Coord currentCoord : snakeCoords) {
+            drawCell(currentCoord, snakeColor);
+        }
+        drawCell(snakeCoords.get(0), headColor);
     }
 
     private void drawFood(GamePlay gamePlay) {

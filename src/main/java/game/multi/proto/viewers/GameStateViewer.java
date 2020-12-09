@@ -2,8 +2,6 @@ package game.multi.proto.viewers;
 
 import dto.Direction;
 import dto.GameState;
-import game.multi.proto.renovators.GameStateRenovator;
-import game.multi.proto.renovators.SnakeRenovator;
 import main.Random;
 
 import java.util.ArrayList;
@@ -155,5 +153,13 @@ public class GameStateViewer {
                     .build();
             emptyCoords.remove(randomCoord);
         }
+    }
+
+    public List<GameState.Snake> getAllSnakesWithoutMySnake() {
+        List<GameState.Snake> allSnakes = new ArrayList<>();
+        for (int i = 0; i < gameState.getSnakesCount(); i++) {
+            allSnakes.add(gameState.getSnakes(i));
+        }
+        return allSnakes;
     }
 }

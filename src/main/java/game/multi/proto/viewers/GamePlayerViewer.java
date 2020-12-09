@@ -25,4 +25,9 @@ public class GamePlayerViewer {
         int player = findPlayerById(playerId);
         return gameState.getPlayers().getPlayers(player).getRole() == NodeRole.MASTER;
     }
+
+    public String getPlayerName(int playerId) {
+        int player = findPlayerById(playerId);
+        return gameState.getPlayers().getPlayers(player).getName();
+    }
 }

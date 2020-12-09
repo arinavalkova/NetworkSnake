@@ -35,4 +35,23 @@ public class GamePlayersRenovator {
                 .build();
         gamePlay.updateGameState(gameState);
     }
+
+    public void addViewer(int player_id, String hostAddress, int port, String name) {
+        GamePlayer gamePlayer = GamePlayer.newBuilder()
+                .setRole(NodeRole.VIEWER)
+                .setName(name)
+                .setScore(0)
+                .setPort(port)
+                .setIpAddress(hostAddress)
+                .setId(player_id)
+                .build();
+
+        GamePlayers gamePlayers = GamePlayers.newBuilder(gamePlay.getGameState().getPlayers())
+                .addPlayers(gamePlayer)
+                .build();
+        GameState gameState = GameState.newBuilder(gamePlay.getGameState())
+                .setPlayers(gamePlayers)
+                .build();
+        gamePlay.updateGameState(gameState);
+    }
 }

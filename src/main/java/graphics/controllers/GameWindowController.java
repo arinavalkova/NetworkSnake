@@ -32,7 +32,7 @@ public class GameWindowController {
     private Canvas canvas;
 
     @FXML
-    private Label masterField;
+    private Label infoLabel;
 
     @FXML
     private JFXListView<String> playersListView;
@@ -46,7 +46,8 @@ public class GameWindowController {
     @FXML
     private JFXButton backToMenuButton;
 
-    private NodeRole nodeRole = null;
+    private NodeRole nodeRole = NodeRole.NORMAL;
+    private NodeRole pressedNodeRoleToHandle = null;
 
     @FXML
     public void initialize() {
@@ -56,14 +57,26 @@ public class GameWindowController {
 
     private void addChangeRoleButtonHandler() {
         changeRoleButton.setOnAction(e -> {
-            if (nodeRole == null || nodeRole == NodeRole.NORMAL) {
-                changeRoleButton.setText(PLAY_MODE);
+            if (nodeRole == NodeRole.NORMAL) {
+                Platform.runLater(() -> changeRoleButton.setText(PLAY_MODE));
+                pressedNodeRoleToHandle = NodeRole.VIEWER;
                 nodeRole = NodeRole.VIEWER;
             } else if (nodeRole == NodeRole.VIEWER) {
-                changeRoleButton.setText(VIEW_MODE);
+                Platform.runLater(() -> changeRoleButton.setText(VIEW_MODE));
+                pressedNodeRoleToHandle = NodeRole.NORMAL;
                 nodeRole = NodeRole.NORMAL;
             }
         });
+    }
+
+    public void setChangeRoleButton(NodeRole nodeRole) {
+        if (nodeRole == NodeRole.VIEWER) {
+            Platform.runLater(() -> changeRoleButton.setText(PLAY_MODE));
+            this.nodeRole = NodeRole.VIEWER;
+        } else if (nodeRole == NodeRole.NORMAL) {
+            Platform.runLater(() -> changeRoleButton.setText(VIEW_MODE));
+            this.nodeRole = NodeRole.NORMAL;
+        }
     }
 
     public void setPlayersList(List<String> playersList) {
@@ -74,7 +87,7 @@ public class GameWindowController {
     }
 
     public void setFieldSize(int width, int height) {
-        Platform.runLater(() ->fieldSizeField.setText(width + " X " + height));
+        Platform.runLater(() -> fieldSizeField.setText(width + " X " + height));
     }
 
     private void addBackButtonHandler() {
@@ -93,15 +106,15 @@ public class GameWindowController {
     }
 
     public NodeRole getButtonNodeRole() {
-        return nodeRole;
+        return pressedNodeRoleToHandle;
     }
 
-    public void setMasterField(String masterName) {
-        masterField.setText(masterName);
+    public void changedRoleHandled() {
+        pressedNodeRoleToHandle = null;
     }
 
     public void setFoodField(int food_static, float food_per_player) {
-        foodField.setText(food_static + PLUS + food_per_player + X);
+        Platform.runLater(() -> foodField.setText(food_static + PLUS + food_per_player + X));
     }
 
     public void updatePlayersList(ArrayList<GamePlayerRenovator> gamePlayerArrayList) {
