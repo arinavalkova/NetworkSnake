@@ -1,12 +1,12 @@
 package game.multi;
 
+import dto.GameMessage;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
 import game.multi.proto.creators.JoinMessageCreator;
 import game.multi.proto.creators.StateMessageCreator;
 import game.multi.proto.renovators.GamePlayerRenovator;
-import game.multi.proto.renovators.GamePlayersRenovator;
 import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
 import game.multi.receive.ReceiverUnicast;
@@ -15,16 +15,17 @@ import graphics.controllers.GameWindowController;
 import graphics.controllers.key.KeyController;
 import graphics.drawers.GameFieldDrawer;
 import main.TimeOut;
-import stoppers.DeputyStopper;
-import stoppers.MasterStopper;
-import stoppers.NormalStopper;
-import stoppers.Stopper;
+import game.multi.stoppers.DeputyToViewer;
+import game.multi.stoppers.MasterToViewer;
+import game.multi.stoppers.NormalToViewer;
+import game.multi.stoppers.ToViewer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.List;
 import java.util.Map;
 
 public class GamePlay implements ActionListener {
@@ -40,8 +41,6 @@ public class GamePlay implements ActionListener {
 
     private GameState gameState;
 
-    private NodeRole nodeRole;
-
     private int msg_seq;
     private final Object msq_seq_mutex;
     private final Object issued_id_mutex;
@@ -51,8 +50,6 @@ public class GamePlay implements ActionListener {
     private int master_id;
     private int deputy_id;
     private InetSocketAddress masterSocketAddress;
-
-    private final RoleChanger roleChanger;
 
     private boolean gameInfoDrawerWork = true;
     private final SenderMulticast senderMulticast;
@@ -67,7 +64,6 @@ public class GamePlay implements ActionListener {
             , NodeRole nodeRole
             , int id
             , InetSocketAddress masterSocketAddress) {
-        this.roleChanger = new RoleChanger();
         this.masterSocketAddress = masterSocketAddress;
         this.senderMulticast = new SenderMulticast(Server.getNetwork());
         this.my_id = id;
@@ -90,7 +86,6 @@ public class GamePlay implements ActionListener {
 //        );
         this.msg_seq = 1;
         //grab master info
-        this.nodeRole = nodeRole;
         msq_seq_mutex = new Object();
         issued_id_mutex = new Object();
         this.receiverUnicast = new ReceiverUnicast(network, this);
@@ -100,9 +95,8 @@ public class GamePlay implements ActionListener {
             while (isModeButtonControllerThreadWork) {
                 NodeRole gottenNodeRole = gameWindowController.getButtonNodeRole();
                 if (gottenNodeRole != null) {
-                    //roleChanger.change(this, gottenNodeRole);
                     if (gottenNodeRole == NodeRole.VIEWER) {
-                        stoppersMap.get(nodeRole).start(this);
+                        stoppersMap.get(getMyNodeRole()).start(this);
                     } else if (gottenNodeRole == NodeRole.NORMAL) {
                         network.sendToSocket(
                                 new JoinMessageCreator(0,
@@ -131,7 +125,7 @@ public class GamePlay implements ActionListener {
         gameInfoDrawerThread.start();
         gameFieldDrawer.drawField(gameState);
         modeButtonControllerThread.start();
-        if (nodeRole == NodeRole.MASTER) {
+        if (new GamePlayerViewer(gameState).getNodeRoleById(my_id) == NodeRole.MASTER) {
             masterTimer.start();
         }
     }
@@ -166,16 +160,8 @@ public class GamePlay implements ActionListener {
         return gameWindowController;
     }
 
-    public NodeRole getNodeRole() {
-        return nodeRole;
-    }
-
     public KeyController getKeyController() {
         return keyController;
-    }
-
-    public void setNodeRole(NodeRole nodeRole) {
-        this.nodeRole = nodeRole;
     }
 
 //    public ConfirmSender getConfirmSender() {
@@ -226,10 +212,10 @@ public class GamePlay implements ActionListener {
         return senderMulticast;
     }
 
-    private static final Map<NodeRole, Stopper> stoppersMap = Map.of(
-            NodeRole.MASTER, new MasterStopper(),
-            NodeRole.NORMAL, new NormalStopper(),
-            NodeRole.DEPUTY, new DeputyStopper()
+    private static final Map<NodeRole, ToViewer> stoppersMap = Map.of(
+            NodeRole.MASTER, new MasterToViewer(),
+            NodeRole.NORMAL, new NormalToViewer(),
+            NodeRole.DEPUTY, new DeputyToViewer()
     );
 
     public void setMyId(int receiverId) {
@@ -240,5 +226,21 @@ public class GamePlay implements ActionListener {
         if (new GamePlayersViewer(gameState).findDeputyPlayer() == null) {
             new GamePlayerRenovator(this).updateNodeRole(playerId, NodeRole.DEPUTY);
         }
+    }
+
+    public NodeRole getMyNodeRole() {
+        return new GamePlayerViewer(gameState).getNodeRoleById(my_id);
+    }
+
+    public void setMyNodeRole(NodeRole nodeRole) {
+        new GamePlayerRenovator(this).updateNodeRole(my_id, nodeRole);
+    }
+
+    public List<GameMessage> getSteerMessages() {
+        return receiverUnicast.getLastSteerMsgFromStorage();
+    }
+
+    public ReceiverUnicast getReceiverUnicast() {
+        return receiverUnicast;
     }
 }

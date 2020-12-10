@@ -9,7 +9,6 @@ import game.multi.proto.viewers.GameStateViewer;
 import main.Random;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class GameStateRenovator {
         Random random = new Random();
         List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
         for (int i = 0; i < neededCount; i++) {
-            GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
+            GameState.Coord randomCoord = emptyCoords.get(random.inBoundsInt(0, emptyCoords.size() - 1));
             gameState = GameState.newBuilder(gameState)
                     .addFoods(randomCoord)
                     .build();
@@ -115,5 +114,16 @@ public class GameStateRenovator {
                 , name
         );
         return player_id;
+    }
+
+    public void addFood(GameState.Coord coord) {
+        GameState gameState = GameState.newBuilder(gamePlay.getGameState())
+                .addFoods(coord)
+                .build();
+        gamePlay.updateGameState(gameState);
+    }
+
+    public GameState getGameState() {
+        return gamePlay.getGameState();
     }
 }

@@ -6,6 +6,7 @@ import game.multi.GamePlay;
 import game.multi.Server;
 import game.multi.proto.creators.SteerMessageCreator;
 import game.multi.proto.renovators.SnakeRenovator;
+import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
 import game.multi.proto.viewers.SnakeViewer;
 import game.multi.receive.handlers.*;
@@ -27,7 +28,7 @@ public class KeyController {
     }
 
     public void setKeyPressed(KeyCode keyCode) {
-        NodeRole nodeRole = gamePlay.getNodeRole();
+        NodeRole nodeRole = gamePlay.getMyNodeRole();
         keyHandlerMap.get(nodeRole).handle(this, keyCode);
     }
 

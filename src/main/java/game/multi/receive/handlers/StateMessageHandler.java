@@ -12,6 +12,6 @@ public class StateMessageHandler implements MessageHandler {
         gamePlay.getGameFieldDrawer().redrawField(gamePlay);
         gamePlay.updateGameState(currentMessage.getState().getState());
         gamePlay.getGameFieldDrawer().redrawField(gamePlay);
-        System.out.println(gamePlay.getNodeRole());
+        System.out.println(gamePlay.getMyNodeRole());
     }
 }

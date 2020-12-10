@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SnakeRenovator {
+    private static final float MIN_DEAD_FOOD_PROB = 0;
+    private static final float MAX_DEAD_FOOD_PROB = 1;
     private GamePlay gamePlay;
 
     public SnakeRenovator(GamePlay gamePlay) {
@@ -93,10 +95,24 @@ public class SnakeRenovator {
     public void deleteSnake(int playerId) {
         GameState gameState = gamePlay.getGameState();
         int snakeId = new SnakeViewer(gameState).getSnakeIdByPlayerId(playerId);
-        gameState = GameState.newBuilder(gameState)
+        generateFoodFromSnake(gameState.getSnakes(snakeId).getPointsList());
+        gameState = GameState.newBuilder(gamePlay.getGameState())
                 .removeSnakes(snakeId)
                 .build();
         gamePlay.updateGameState(gameState);
+    }
+
+    private void generateFoodFromSnake(List<GameState.Coord> pointsList) {
+        main.Random random = new main.Random();
+        float chanceOfTurningIntoFood = gamePlay.getGameState().getConfig().getDeadFoodProb();
+        GameStateRenovator gameStateRenovator = new GameStateRenovator(gamePlay);
+        for (GameState.Coord currentCoord : pointsList) {
+            float randomNumber = random.inBoundsFloat(MIN_DEAD_FOOD_PROB, MAX_DEAD_FOOD_PROB);
+            if (randomNumber <= chanceOfTurningIntoFood) {
+                gameStateRenovator.addFood(currentCoord);
+            }
+        }
+        gamePlay.updateGameState(gameStateRenovator.getGameState());
     }
 
     public GameState.Snake getMySnake() {
@@ -110,7 +126,24 @@ public class SnakeRenovator {
         } catch (NullPointerException nullPointerException) {
             return null;
         }
+        if (snake.getState() == GameState.Snake.SnakeState.ZOMBIE) {
+            return null;
+        }
         return snake;
+    }
+
+    public void makeSnakeZombie(int playerId) {
+        GameState gameState = gamePlay.getGameState();
+        Integer snake_id = new SnakeViewer(gameState).getSnakeIdByPlayerId(playerId);
+        gameState = GameState.newBuilder(gameState)
+                .setSnakes(snake_id,
+                        gameState
+                                .getSnakes(snake_id)
+                                .toBuilder()
+                                .setState(GameState.Snake.SnakeState.ZOMBIE)
+                                .build())
+                .build();
+        gamePlay.updateGameState(gameState);
     }
 }
 

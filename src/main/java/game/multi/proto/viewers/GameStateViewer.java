@@ -67,7 +67,7 @@ public class GameStateViewer {
         List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
         List<GameState.Coord> answerList = new ArrayList<>();
         while (!emptyCoords.isEmpty()) {
-            GameState.Coord currentCoord = emptyCoords.get(new Random().inBounds(0, emptyCoords.size() - 1));
+            GameState.Coord currentCoord = emptyCoords.get(new Random().inBoundsInt(0, emptyCoords.size() - 1));
             emptyCoords.remove(currentCoord);
             if (isCellNeighborhoodEmpty(currentCoord)) {
                 answerList.add(currentCoord);
@@ -147,7 +147,7 @@ public class GameStateViewer {
         Random random = new Random();
         List<GameState.Coord> emptyCoords = new GameStateViewer(gameState).getAllEmptyCoords();
         for(int i = 0; i < neededCount; i++) {
-            GameState.Coord randomCoord = emptyCoords.get(random.inBounds(0, emptyCoords.size() - 1));
+            GameState.Coord randomCoord = emptyCoords.get(random.inBoundsInt(0, emptyCoords.size() - 1));
             gameState = GameState.newBuilder(gameState)
                     .addFoods(randomCoord)
                     .build();
@@ -155,7 +155,7 @@ public class GameStateViewer {
         }
     }
 
-    public List<GameState.Snake> getAllSnakesWithoutMySnake() {
+    public List<GameState.Snake> getAllSnakes() {
         List<GameState.Snake> allSnakes = new ArrayList<>();
         for (int i = 0; i < gameState.getSnakesCount(); i++) {
             allSnakes.add(gameState.getSnakes(i));

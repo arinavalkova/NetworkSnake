@@ -3,6 +3,8 @@ package game.multi.proto.renovators;
 import dto.*;
 import game.multi.GamePlay;
 
+import java.util.List;
+
 public class GamePlayersRenovator {
     private GamePlay gamePlay;
 
@@ -53,5 +55,15 @@ public class GamePlayersRenovator {
                 .setPlayers(gamePlayers)
                 .build();
         gamePlay.updateGameState(gameState);
+    }
+
+    public void findNewDeputy() {
+        List<GamePlayer> gamePlayerList = gamePlay.getGameState().getPlayers().getPlayersList();
+        for (GamePlayer currentGamePlayer : gamePlayerList) {
+            if (currentGamePlayer.getRole() == NodeRole.NORMAL) {
+                new GamePlayerRenovator(gamePlay).updateNodeRole(currentGamePlayer.getId(), NodeRole.DEPUTY);
+                break;
+            }
+        }
     }
 }

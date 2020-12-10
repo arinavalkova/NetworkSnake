@@ -1,6 +1,7 @@
 package game.multi.players;
 
 import dto.Direction;
+import dto.GameMessage;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.GamePlay;
@@ -27,12 +28,25 @@ public class MasterPlayer {
                 ).getBytes()
         );     /* Invite send thread updating */
 
+        applySteerMessages(gamePlay);
+
         Map<Integer, GameState.Coord> testMoveCoords = testMoveAllPlayers(gamePlay);
         if (!checkAllPlayers(testMoveCoords, gamePlay)) {
             //MASTER is gone
            return false;
         }
         return true;
+    }
+
+    private void applySteerMessages(GamePlay gamePlay) {
+        List<GameMessage> steerMessages = gamePlay.getSteerMessages();
+        for (GameMessage currentGameMessage : steerMessages) {
+            SnakeRenovator snakeRenovator = new SnakeRenovator(gamePlay);
+            snakeRenovator.updateSnakeDirectionByPlayerId(
+                    currentGameMessage.getSenderId(),
+                    currentGameMessage.getSteer().getDirection()
+            );
+        }
     }
 
     private boolean checkAllPlayers(Map<Integer, GameState.Coord> testMoveMap, GamePlay gamePlay) {

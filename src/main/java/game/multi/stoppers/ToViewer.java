@@ -1,7 +1,7 @@
-package stoppers;
+package game.multi.stoppers;
 
 import game.multi.GamePlay;
 
-public interface Stopper {
+public interface ToViewer {
     void start(GamePlay gamePlay);
 }

@@ -10,10 +10,6 @@ import java.net.InetSocketAddress;
 public class SteerMessageHandler implements MessageHandler {
     @Override
     public void handle(InetSocketAddress socketAddress, GamePlay gamePlay, GameMessage currentMessage) {
-        SnakeRenovator snakeRenovator = new SnakeRenovator(gamePlay);
-        snakeRenovator.updateSnakeDirectionByPlayerId(
-                currentMessage.getSenderId(),
-                currentMessage.getSteer().getDirection()
-        );
+        gamePlay.getReceiverUnicast().putSteerMsgToStorage(currentMessage);
     }
 }

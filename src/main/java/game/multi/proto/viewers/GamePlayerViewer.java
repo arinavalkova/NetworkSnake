@@ -30,4 +30,9 @@ public class GamePlayerViewer {
         int player = findPlayerById(playerId);
         return gameState.getPlayers().getPlayers(player).getName();
     }
+
+    public NodeRole getNodeRoleById(int my_id) {
+        int my_player = findPlayerById(my_id);
+        return gameState.getPlayers().getPlayers(my_id).getRole();
+    }
 }

@@ -61,7 +61,7 @@ public class GameFieldDrawer {
 
     private void drawSnakes(GamePlay gamePlay) {
         List<GameState.Snake> allSnakesWithoutMySnake =
-                new GameStateViewer(gamePlay.getGameState()).getAllSnakesWithoutMySnake();
+                new GameStateViewer(gamePlay.getGameState()).getAllSnakes();
         for (GameState.Snake currentSnake : allSnakesWithoutMySnake) {
             drawSnake(currentSnake, DrawerColor.SNAKES, DrawerColor.HEAD_SNAKES);
         }
