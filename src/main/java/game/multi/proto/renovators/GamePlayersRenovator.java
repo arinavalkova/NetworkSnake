@@ -2,6 +2,7 @@ package game.multi.proto.renovators;
 
 import dto.*;
 import game.multi.GamePlay;
+import game.multi.proto.viewers.GamePlayerViewer;
 
 import java.util.List;
 
@@ -65,5 +66,20 @@ public class GamePlayersRenovator {
                 break;
             }
         }
+    }
+
+    public void deletePlayer(int playerId) {
+        int playerNum = new GamePlayerViewer(gamePlay.getGameState()).findPlayerById(playerId);
+        GamePlayers gamePlayers = GamePlayers.newBuilder(gamePlay.getGameState().getPlayers())
+                .removePlayers(playerNum)
+                .build();
+        GameState gameState = GameState.newBuilder(gamePlay.getGameState())
+                .setPlayers(gamePlayers)
+                .build();
+        gamePlay.updateGameState(gameState);
+    }
+
+    public GameState getGameState() {
+        return gamePlay.getGameState();
     }
 }

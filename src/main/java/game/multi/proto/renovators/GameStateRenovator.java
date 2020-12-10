@@ -113,6 +113,7 @@ public class GameStateRenovator {
                 , socketAddress.getPort()
                 , name
         );
+        gamePlay.updateGameState(gamePlayersRenovator.getGameState());
         return player_id;
     }
 

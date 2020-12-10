@@ -12,7 +12,7 @@ public class RoleChangeMessageCreator {
         if (sender_role != null) {
             roleChangeMsgBuilder.setSenderRole(sender_role);
         }
-        if (receiver_id != null) {
+        if (receiver_role != null) {
             roleChangeMsgBuilder.setReceiverRole(receiver_role);
         }
         GameMessage.Builder roleChangeMessageBuilder = GameMessage.newBuilder()

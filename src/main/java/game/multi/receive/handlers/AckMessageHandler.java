@@ -11,7 +11,7 @@ public class AckMessageHandler implements MessageHandler {
     @Override
     public void handle(InetSocketAddress socketAddress, GamePlay gamePlay, GameMessage currentMessage) {
         gamePlay.setMyId(currentMessage.getReceiverId());
-        gamePlay.setMyNodeRole(NodeRole.NORMAL);
+        //gamePlay.setMyNodeRole(NodeRole.NORMAL);
         //receiverFactory.getGame().getConfirmSender().confirmMessage(mess_seq);
     }
 }

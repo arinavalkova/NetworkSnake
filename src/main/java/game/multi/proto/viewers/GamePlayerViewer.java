@@ -2,6 +2,8 @@ package game.multi.proto.viewers;
 
 import dto.*;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 
 public class GamePlayerViewer {
@@ -33,6 +35,13 @@ public class GamePlayerViewer {
 
     public NodeRole getNodeRoleById(int my_id) {
         int my_player = findPlayerById(my_id);
-        return gameState.getPlayers().getPlayers(my_id).getRole();
+        return gameState.getPlayers().getPlayers(my_player).getRole();
+    }
+
+    public InetSocketAddress getPlayerSocketAddress(Integer player_id) {
+        int playerNum = new GamePlayerViewer(gameState).findPlayerById(player_id);
+
+        return new InetSocketAddress(gameState.getPlayers().getPlayers(playerNum).getIpAddress(),
+                gameState.getPlayers().getPlayers(playerNum).getPort());
     }
 }

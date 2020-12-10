@@ -6,13 +6,18 @@ import dto.GameState;
 import dto.NodeRole;
 import game.multi.GamePlay;
 import game.multi.Server;
+import game.multi.proto.creators.AckMessageCreator;
 import game.multi.proto.creators.AnnouncmentMessageCreator;
+import game.multi.proto.creators.RoleChangeMessageCreator;
 import game.multi.proto.creators.StateMessageCreator;
 import game.multi.proto.renovators.GamePlayerRenovator;
+import game.multi.proto.renovators.GamePlayersRenovator;
 import game.multi.proto.renovators.GameStateRenovator;
 import game.multi.proto.renovators.SnakeRenovator;
+import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
 import game.multi.proto.viewers.SnakeViewer;
+import game.multi.stoppers.MasterToViewer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,20 +68,73 @@ public class MasterPlayer {
             if (coordIfItFood != null) {
                 new GameStateRenovator(gamePlay).deleteFood(coordIfItFood);
                 new SnakeRenovator(gamePlay).snakeEat(entry.getKey());
+                //если не зомби то увеличивать очки
                 new GamePlayerRenovator(gamePlay).incPoints(entry.getKey());
             } else if (!coordsIfItSnakes.isEmpty()) {
                 for (Map.Entry<Integer, GameState.Coord> playersForDelete : coordsIfItSnakes.entrySet()) {
-                    //say all coords if it snakes that they have game over
-                    // если кто-то из них мастер то iAlive = false;
+                    if (playersForDelete.getKey() == gamePlay.getMy_id()) {
+                        new MasterToViewer().start(gamePlay);
+                    } else {
+                        GameStateRenovator gameStateRenovator = new GameStateRenovator(gamePlay);
+                        int newPlayerId = gameStateRenovator.addViewerPlayer(
+                                new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(entry.getKey()),
+                                new GamePlayerViewer(gamePlay.getGameState()).getPlayerName(playersForDelete.getKey()));
+                        gamePlay.updateGameState(gameStateRenovator.getGameState());
+                        GamePlayersRenovator gamePlayersRenovator = new GamePlayersRenovator(gamePlay);
+                        gamePlayersRenovator.deletePlayer(playersForDelete.getKey());
+                        gamePlay.updateGameState(gamePlayersRenovator.getGameState());
+                        Server.getNetwork().sendToSocket(
+                                new AckMessageCreator(
+                                        gamePlay.getAndIncMsgSeq(),
+                                        gamePlay.getMy_id(),
+                                        newPlayerId).getBytes(),
+                                new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(entry.getKey())
+                        );
+                        Server.getNetwork().sendToSocket(
+                                new RoleChangeMessageCreator(
+                                        gamePlay.getAndIncMsgSeq(),
+                                        gamePlay.getMy_id(),
+                                        null,
+                                        null,
+                                        NodeRole.VIEWER).getBytes(),
+                                new GamePlayerViewer(gamePlay.getGameState())
+                                        .getPlayerSocketAddress(newPlayerId)
+                        );
+                        new SnakeRenovator(gamePlay).deleteSnake(playersForDelete.getKey());
+                    }
                     testMoveMap.remove(playersForDelete.getKey());
                 }
             } else if (findCoordInListOfCoords(entry.getValue(),
                     new SnakeViewer(gamePlay.getGameState()).getSnakeCoords(entry.getKey())) != null) {
                 if (entry.getKey() == gamePlay.getMy_id()) {
-                    iAlive = false;
-                    //Master has game over
+                    new MasterToViewer().start(gamePlay);
+                } else {
+                    GameStateRenovator gameStateRenovator = new GameStateRenovator(gamePlay);
+                    int newPlayerId = gameStateRenovator.addViewerPlayer(
+                            new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(entry.getKey()),
+                            new GamePlayerViewer(gamePlay.getGameState()).getPlayerName(entry.getKey()));
+                    gamePlay.updateGameState(gameStateRenovator.getGameState());
+                    GamePlayersRenovator gamePlayersRenovator = new GamePlayersRenovator(gamePlay);
+                    gamePlayersRenovator.deletePlayer(entry.getKey());
+                    gamePlay.updateGameState(gamePlayersRenovator.getGameState());
+                    Server.getNetwork().sendToSocket(
+                            new AckMessageCreator(
+                                    gamePlay.getAndIncMsgSeq(),
+                                    gamePlay.getMy_id(),
+                                    newPlayerId).getBytes(),
+                            new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(newPlayerId)
+                    );
+                    Server.getNetwork().sendToSocket(
+                            new RoleChangeMessageCreator(
+                                    gamePlay.getAndIncMsgSeq(),
+                                    gamePlay.getMy_id(),
+                                    null,
+                                    null,
+                                    NodeRole.VIEWER).getBytes(),
+                            new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(newPlayerId)
+                    );
                 }
-                //say that he has game over
+                new SnakeRenovator(gamePlay).deleteSnake(entry.getKey());
             } else {
                 new SnakeRenovator(gamePlay).snakeMove(entry.getKey());
             }

@@ -101,7 +101,8 @@ public class GamePlay implements ActionListener {
                         network.sendToSocket(
                                 new JoinMessageCreator(0,
                                         false,
-                                        new GamePlayerViewer(gameState).getPlayerName(my_id), my_id)
+                                        new GamePlayerViewer(this.gameState).getPlayerName(my_id),
+                                        my_id)
                                         .getBytes(),
                                 masterSocketAddress
                         );//to confirm
@@ -242,5 +243,13 @@ public class GamePlay implements ActionListener {
 
     public ReceiverUnicast getReceiverUnicast() {
         return receiverUnicast;
+    }
+
+    public SocketAddress getDeputySocketAddress() {
+        return new GamePlayersViewer(gameState).getDeputySocketAddress();
+    }
+
+    public Timer getMasterTimer() {
+        return masterTimer;
     }
 }
