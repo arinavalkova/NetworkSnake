@@ -83,7 +83,7 @@ public class GameStateRenovator {
             Integer senderId) {
         int playerId;
         if (senderId.equals(UNKNOWN_SENDER_ID)) {
-            playerId = gamePlay.getAndIncIssuedId();//////////////it is tooo bad
+            playerId = gamePlay.getAndIncIssuedId();
             if (!addSnake(playerId)) {
                 return null;
             }

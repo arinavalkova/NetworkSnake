@@ -35,7 +35,6 @@ public class ReceiverMulticast {
     }
 
     public void stop() {
-        //если я мастер отправить deputy очередь с необработанными сообщениями
         this.isReceiverFromMulticastWork = false;
     }
 

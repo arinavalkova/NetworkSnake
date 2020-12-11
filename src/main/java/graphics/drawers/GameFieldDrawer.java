@@ -54,7 +54,7 @@ public class GameFieldDrawer {
 
     public void redrawField(GamePlay gamePlay) {
         clear(gamePlay.getGameState());
-        drawField(gamePlay.getGameState());//либо всегда новый объект создавать
+        drawField(gamePlay.getGameState());
         drawFood(gamePlay);
         drawSnakes(gamePlay);
     }

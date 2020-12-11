@@ -135,6 +135,9 @@ public class SnakeRenovator {
     public void makeSnakeZombie(int playerId) {
         GameState gameState = gamePlay.getGameState();
         Integer snake_id = new SnakeViewer(gameState).getSnakeIdByPlayerId(playerId);
+        if (snake_id == null) {
+            return;
+        }
         gameState = GameState.newBuilder(gameState)
                 .setSnakes(snake_id,
                         gameState
@@ -144,6 +147,10 @@ public class SnakeRenovator {
                                 .build())
                 .build();
         gamePlay.updateGameState(gameState);
+    }
+
+    public GameState getGameState() {
+        return gamePlay.getGameState();
     }
 }
 

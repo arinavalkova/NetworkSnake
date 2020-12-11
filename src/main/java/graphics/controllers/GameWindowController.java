@@ -123,5 +123,9 @@ public class GameWindowController {
             playersListView.getItems().add(currentGamePlayer.toString());
         }
     }
+
+    public void setInfoField(String text) {
+        Platform.runLater(() ->infoLabel.setText(text));
+    }
 }
 

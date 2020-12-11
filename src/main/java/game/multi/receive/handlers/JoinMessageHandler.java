@@ -55,6 +55,6 @@ public class JoinMessageHandler implements MessageHandler {
                     socketAddress
             );
         }
-        gamePlay.updateDeputy(playerId);
+        gamePlay.updateDeputy();
     }
 }

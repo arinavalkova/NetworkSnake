@@ -42,13 +42,11 @@ public class ReceiverUnicast {
     }
 
     public void stop() {
-        //если я мастер отправить deputy очередь с необработанными сообщениями
         this.isReceiverFromUnicastWork = false;
     }
 
     private static final Map<Integer, MessageHandler> messageHandlerMap = Map.of(
-            2, new PingMessageHandler()
-            , 3, new SteerMessageHandler()
+            3, new SteerMessageHandler()
             , 4, new AckMessageHandler()
             , 5, new StateMessageHandler()
             , 7, new JoinMessageHandler()

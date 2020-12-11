@@ -18,7 +18,7 @@ import java.net.InetSocketAddress;
 
 public class JoinWindowController {
 
-    private final static int GAMES_LIST_TIME_OUT = 5000;
+    private final static int GAMES_LIST_TIME_OUT = 10000;
 
 //    @FXML
 //    private Label errorField;

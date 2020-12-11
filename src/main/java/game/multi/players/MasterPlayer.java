@@ -16,6 +16,7 @@ import game.multi.proto.renovators.GameStateRenovator;
 import game.multi.proto.renovators.SnakeRenovator;
 import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
+import game.multi.proto.viewers.GameStateViewer;
 import game.multi.proto.viewers.SnakeViewer;
 import game.multi.stoppers.MasterToViewer;
 
@@ -31,15 +32,12 @@ public class MasterPlayer {
                         gamePlay.getAndIncMsgSeq()
                         , gameState
                 ).getBytes()
-        );     /* Invite send thread updating */
+        );
 
         applySteerMessages(gamePlay);
 
         Map<Integer, GameState.Coord> testMoveCoords = testMoveAllPlayers(gamePlay);
-        if (!checkAllPlayers(testMoveCoords, gamePlay)) {
-            //MASTER is gone
-           return false;
-        }
+        checkAllPlayers(testMoveCoords, gamePlay);
         return true;
     }
 
@@ -64,17 +62,35 @@ public class MasterPlayer {
             GameState.Coord coordIfItFood = findCoordInListOfCoords(entry.getValue(), foodsCoords);
             Map<Integer, GameState.Coord> coordsIfItSnakes = findSameCoordsInMap(entry.getKey(),
                     entry.getValue(), testMoveMap);
-
+            GameState.Snake.SnakeState snakeState = new SnakeViewer(gamePlay.getGameState())
+                    .getSnakeStateByPlayerId(entry.getKey());
             if (coordIfItFood != null) {
                 new GameStateRenovator(gamePlay).deleteFood(coordIfItFood);
                 new SnakeRenovator(gamePlay).snakeEat(entry.getKey());
-                //если не зомби то увеличивать очки
-                new GamePlayerRenovator(gamePlay).incPoints(entry.getKey());
+                if (snakeState != GameState.Snake.SnakeState.ZOMBIE) {
+                    new GamePlayerRenovator(gamePlay).incPoints(entry.getKey());
+                }
             } else if (!coordsIfItSnakes.isEmpty()) {
                 for (Map.Entry<Integer, GameState.Coord> playersForDelete : coordsIfItSnakes.entrySet()) {
                     if (playersForDelete.getKey() == gamePlay.getMy_id()) {
+                        new SnakeRenovator(gamePlay).deleteSnake(entry.getKey());
+                        Server.getNetwork().sendToListOfAddresses(
+                                new GamePlayersViewer(gamePlay.getGameState()).getSocketAddressOfAllPlayersWithOutMaster(),
+                                new StateMessageCreator(gamePlay.getAndIncMsgSeq(), gamePlay.getGameState()).getBytes()
+                        );
                         new MasterToViewer().start(gamePlay);
-                    } else {
+                        Server.getNetwork().sendToSocket(
+                                new RoleChangeMessageCreator(
+                                        gamePlay.getAndIncMsgSeq(),
+                                        gamePlay.getMy_id(),
+                                        null,
+                                        NodeRole.VIEWER,
+                                        null
+                                ).getBytes(),
+                                gamePlay.getDeputySocketAddress()
+                        );
+                        return iAlive;
+                    } else if (snakeState != GameState.Snake.SnakeState.ZOMBIE) {
                         GameStateRenovator gameStateRenovator = new GameStateRenovator(gamePlay);
                         int newPlayerId = gameStateRenovator.addViewerPlayer(
                                 new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(entry.getKey()),
@@ -105,10 +121,26 @@ public class MasterPlayer {
                     testMoveMap.remove(playersForDelete.getKey());
                 }
             } else if (findCoordInListOfCoords(entry.getValue(),
-                    new SnakeViewer(gamePlay.getGameState()).getSnakeCoords(entry.getKey())) != null) {
+                    new GameStateViewer(gamePlay.getGameState()).getAllSnakesCoords()) != null) {
                 if (entry.getKey() == gamePlay.getMy_id()) {
+                    new SnakeRenovator(gamePlay).deleteSnake(entry.getKey());
+                    Server.getNetwork().sendToListOfAddresses(
+                            new GamePlayersViewer(gamePlay.getGameState()).getSocketAddressOfAllPlayersWithOutMaster(),
+                            new StateMessageCreator(gamePlay.getAndIncMsgSeq(), gamePlay.getGameState()).getBytes()
+                    );
                     new MasterToViewer().start(gamePlay);
-                } else {
+                    Server.getNetwork().sendToSocket(
+                            new RoleChangeMessageCreator(
+                                    gamePlay.getAndIncMsgSeq(),
+                                    gamePlay.getMy_id(),
+                                    null,
+                                    NodeRole.VIEWER,
+                                    null
+                            ).getBytes(),
+                            gamePlay.getDeputySocketAddress()
+                    );
+                    return iAlive;
+                } else if (snakeState != GameState.Snake.SnakeState.ZOMBIE) {
                     GameStateRenovator gameStateRenovator = new GameStateRenovator(gamePlay);
                     int newPlayerId = gameStateRenovator.addViewerPlayer(
                             new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(entry.getKey()),
@@ -133,13 +165,14 @@ public class MasterPlayer {
                                     NodeRole.VIEWER).getBytes(),
                             new GamePlayerViewer(gamePlay.getGameState()).getPlayerSocketAddress(newPlayerId)
                     );
+                    new SnakeRenovator(gamePlay).deleteSnake(entry.getKey());
                 }
-                new SnakeRenovator(gamePlay).deleteSnake(entry.getKey());
             } else {
                 new SnakeRenovator(gamePlay).snakeMove(entry.getKey());
             }
             testMoveMap.remove(entry.getKey());
         }
+        gamePlay.updateDeputy();
         new GameStateRenovator(gamePlay).generateFoodIfNecessary();
         return iAlive;
     }

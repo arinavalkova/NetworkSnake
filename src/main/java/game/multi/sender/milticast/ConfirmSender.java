@@ -27,7 +27,7 @@ public class ConfirmSender {
             while (entries.hasNext()) {
                 Map.Entry<Integer, ByteMessage> entry = entries.next();
                 if (entry.getValue().getTimeFromFirstSent() > node_timeout_ms) {
-                    //учесть что та нода недоступна
+
                 }
                 if (System.currentTimeMillis() - entry.getValue().getCurrentTimeSent() > ping_delay_ms) {
                     entry.getValue().updateForRecent();
@@ -56,7 +56,7 @@ public class ConfirmSender {
         }
     }
 
-    public void confirmMessage(int messageSeq) {
+    public void confirmMessage(long messageSeq) {
         synchronized (unconfirmedMessages) {
             unconfirmedMessages.remove(messageSeq);
         }

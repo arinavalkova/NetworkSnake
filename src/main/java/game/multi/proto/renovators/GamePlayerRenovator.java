@@ -81,4 +81,8 @@ public class GamePlayerRenovator {
                 .build();
         gamePlay.updateGameState(gameState);
     }
+
+    public GameState getGameState() {
+        return gamePlay.getGameState();
+    }
 }

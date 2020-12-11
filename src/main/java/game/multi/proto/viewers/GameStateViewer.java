@@ -81,8 +81,6 @@ public class GameStateViewer {
 
     public void addSnake(int playerId) {
         List<GameState.Coord> startCoords = findCoordsForNewSnake();
-//        if (startCoords.isEmpty())
-//            return null;
         GameState.Snake newSnake = GameState.Snake.newBuilder()
                 .setHeadDirection(Direction.UP)
                 .setState(GameState.Snake.SnakeState.ALIVE)

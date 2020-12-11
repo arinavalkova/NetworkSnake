@@ -43,7 +43,6 @@ public class GamePlayersViewer {
         List<String> answer = new ArrayList<>();
         List<GamePlayer> gamePlayerList = gameState.getPlayers().getPlayersList();
         for (GamePlayer currentGamePlayer : gamePlayerList) {
-            //if (currentGamePlayer.getRole() != NodeRole.VIEWER)
             answer.add(
                     currentGamePlayer.getName() + SPACE +
                             currentGamePlayer.getId() + SPACE +
@@ -77,5 +76,9 @@ public class GamePlayersViewer {
             }
         }
         return null;
+    }
+
+    public List<GamePlayer> getAllPlayers() {
+        return gameState.getPlayers().getPlayersList();
     }
 }

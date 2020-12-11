@@ -26,7 +26,5 @@ public class Main extends Application {
             Server.stop();
             primaryStage.close();
         });
-//        GenerateStateMsg generateStateMsg = new GenerateStateMsg();
-//        generateStateMsg.testGenerateStateMsg();
     }
 }

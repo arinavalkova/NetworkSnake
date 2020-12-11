@@ -1,6 +1,7 @@
 package game.multi;
 
 import dto.GameMessage;
+import dto.GamePlayer;
 import dto.GameState;
 import dto.NodeRole;
 import game.multi.players.*;
@@ -9,7 +10,9 @@ import game.multi.proto.creators.StateMessageCreator;
 import game.multi.proto.renovators.GamePlayerRenovator;
 import game.multi.proto.viewers.GamePlayerViewer;
 import game.multi.proto.viewers.GamePlayersViewer;
+import game.multi.proto.viewers.GameStateViewer;
 import game.multi.receive.ReceiverUnicast;
+import game.multi.sender.milticast.ConfirmSender;
 import game.multi.sender.milticast.SenderMulticast;
 import graphics.controllers.GameWindowController;
 import graphics.controllers.key.KeyController;
@@ -40,6 +43,7 @@ public class GamePlay implements ActionListener {
     private final ReceiverUnicast receiverUnicast;
 
     private GameState gameState;
+    private final ConfirmSender confirmSender;
 
     private int msg_seq;
     private final Object msq_seq_mutex;
@@ -77,15 +81,13 @@ public class GamePlay implements ActionListener {
         this.masterTimer = new Timer(gameState.getConfig().getStateDelayMs(), this);
         this.keyController = new KeyController(this);
         this.keyController.start();
-//        this.confirmSender = new ConfirmSender(
-//                gameConfig.getPingDelayMs(),
-//                gameConfig.getNodeTimeoutMs(),
-//                network,
-//                this,
-//                roleChanger
-//        );
+        this.confirmSender = new ConfirmSender(
+                gameState.getConfig().getPingDelayMs(),
+                gameState.getConfig().getNodeTimeoutMs(),
+                network,
+                this
+        );
         this.msg_seq = 1;
-        //grab master info
         msq_seq_mutex = new Object();
         issued_id_mutex = new Object();
         this.receiverUnicast = new ReceiverUnicast(network, this);
@@ -104,8 +106,8 @@ public class GamePlay implements ActionListener {
                                         new GamePlayerViewer(this.gameState).getPlayerName(my_id),
                                         my_id)
                                         .getBytes(),
-                                masterSocketAddress
-                        );//to confirm
+                                getMasterSocketAddress()
+                        );
                     }
                     gameWindowController.changedRoleHandled();
                 }
@@ -134,7 +136,7 @@ public class GamePlay implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!masterPlayer.play(this)) {
-            stop();//changerRole.change(gamePlay, VIEWER)
+            stop();
         }
         getGameFieldDrawer().redrawField(this);
         Server.getNetwork().sendToListOfAddresses(
@@ -165,10 +167,6 @@ public class GamePlay implements ActionListener {
         return keyController;
     }
 
-//    public ConfirmSender getConfirmSender() {
-//        return confirmSender;
-//    }
-
     public int getAndIncMsgSeq() {
         synchronized (msq_seq_mutex) {
             msg_seq++;
@@ -177,13 +175,21 @@ public class GamePlay implements ActionListener {
     }
 
     public int getAndIncIssuedId() {
+        int maxId = 0;
+        List<GamePlayer> gamePlayList = gameState.getPlayers().getPlayersList();
+        for (GamePlayer currentGamePlayer : gamePlayList) {
+            if (currentGamePlayer.getId() > maxId) {
+                maxId = currentGamePlayer.getId();
+            }
+        }
         synchronized (issued_id_mutex) {
-            issued_id++;
+            issued_id = maxId + 1;
         }
         return issued_id;
     }
 
     public SocketAddress getMasterSocketAddress() {
+        masterSocketAddress = new GamePlayersViewer(gameState).getMasterAddress();
         return masterSocketAddress;
     }
 
@@ -223,9 +229,20 @@ public class GamePlay implements ActionListener {
         my_id = receiverId;
     }
 
-    public void updateDeputy(Integer playerId) {
+    public void updateDeputy() {
         if (new GamePlayersViewer(gameState).findDeputyPlayer() == null) {
-            new GamePlayerRenovator(this).updateNodeRole(playerId, NodeRole.DEPUTY);
+            List<GamePlayer> gamePlayerList = new GamePlayersViewer(gameState).getAllPlayers();
+            for (GamePlayer currentGamePlayer : gamePlayerList) {
+                if (currentGamePlayer.getRole() != NodeRole.MASTER &&
+                        currentGamePlayer.getRole() != NodeRole.VIEWER) {
+                    System.out.println(currentGamePlayer);
+                    new GamePlayerRenovator(this).updateNodeRole(
+                            currentGamePlayer.getId(),
+                            NodeRole.DEPUTY
+                    );
+                    break;
+                }
+            }
         }
     }
 
@@ -245,11 +262,28 @@ public class GamePlay implements ActionListener {
         return receiverUnicast;
     }
 
-    public SocketAddress getDeputySocketAddress() {
+    public InetSocketAddress getDeputySocketAddress() {
         return new GamePlayersViewer(gameState).getDeputySocketAddress();
     }
 
     public Timer getMasterTimer() {
         return masterTimer;
+    }
+
+    public void setIssuedId() {
+        int maxId = 0;
+        List<GamePlayer> gamePlayList = gameState.getPlayers().getPlayersList();
+        for (GamePlayer currentGamePlayer : gamePlayList) {
+            if (currentGamePlayer.getId() > maxId) {
+                maxId = currentGamePlayer.getId();
+            }
+        }
+        synchronized (issued_id_mutex) {
+            issued_id = maxId + 1;
+        }
+    }
+
+    public ConfirmSender getConfirmSender() {
+        return confirmSender;
     }
 }
